@@ -971,8 +971,6 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param zoomValue - The optional zoom value to use for zooming.
    */
   onZoomChange(event: '-' | '+', zoomValue?: number) {
-    console.log('hello');
-
     let zoom = zoomValue ?? this.getZoomValue();
     zoom = Number(zoom.toFixed(1));
     // Get the canvas and zoom point
