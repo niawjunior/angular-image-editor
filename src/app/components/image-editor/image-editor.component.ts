@@ -76,6 +76,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     zoomIn: '+',
     zoomOut: '-',
   } as const;
+  private _percentageValue = 100; // Initial percentage value
+  private _zoomLevel = 1; // Initial zoom level for the image
 
   // editing event
   onEditingChange = output<boolean>();
@@ -969,7 +971,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param zoomValue - The optional zoom value to use for zooming.
    */
   onZoomChange(event: '-' | '+', zoomValue?: number) {
-    // Determine the zoom value
+    console.log('hello');
 
     let zoom = zoomValue ?? this.getZoomValue();
     zoom = Number(zoom.toFixed(1));
@@ -1828,5 +1830,44 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // Retrieve the array of objects on the canvas and check its length.
     // If the length is 0, the "Clear" action should be disabled.
     return this.canvasFabric?.getObjects()?.length === 0;
+  }
+
+  fit() {
+    this._percentageValue = 100;
+
+    this.updateZoomLevel();
+  }
+  get zoomLevel(): number {
+    return this._zoomLevel;
+  }
+
+  private updateZoomLevel() {
+    // Map the percentageValue to the desired zoom range (e.g., 1 to 2)
+    this.zoomLevel = 1 + (this._percentageValue - 100) / 100;
+    this.handleZoom(this.zoomLevel);
+  }
+
+  set zoomLevel(value: number) {
+    this._zoomLevel = value;
+  }
+
+  zoomOut() {
+    this._percentageValue = Math.max(100, this.percentageValue - 10);
+
+    this.updateZoomLevel();
+  }
+
+  zoomIn() {
+    this._percentageValue = Math.min(200, this.percentageValue + 10);
+    this.updateZoomLevel();
+  }
+
+  get percentageValue(): number {
+    return this._percentageValue;
+  }
+
+  set percentageValue(value: number) {
+    this._percentageValue = value;
+    this.updateZoomLevel();
   }
 }
