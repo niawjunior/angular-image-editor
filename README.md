@@ -1,5 +1,8 @@
 #### This project is an image editor built with Angular and Fabric.js, designed to provide a smooth editing experience across both desktop and mobile platforms. The editor supports common shape drawing, adding tags, freehand text, and managing layers, with zoom and layer manipulation features.
 
+# Vdieo Demo
+https://github.com/user-attachments/assets/c74eadcf-e556-4242-bf62-566283222b30
+
 ## Desktop
 
 ![alt text](desktop.png)
