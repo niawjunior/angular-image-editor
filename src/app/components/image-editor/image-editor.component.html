@@ -1,0 +1,805 @@
+@if (!isDesktop()) {
+<div class="editor-container relative">
+  <div class="header" (click)="handleHeaderClick($event)">
+    <div class="flex flex-col h-full w-full items-center justify-between">
+      <div
+        class="color white"
+        [ngClass]="{ active: selectedColor === colors.white }"
+        (click)="setSelectedColor(colors.white)"
+      ></div>
+      <div
+        class="color black"
+        [ngClass]="{ active: selectedColor === colors.black }"
+        (click)="setSelectedColor(colors.black)"
+      ></div>
+      <div
+        class="color blue"
+        [ngClass]="{ active: selectedColor === colors.blue }"
+        (click)="setSelectedColor(colors.blue)"
+      ></div>
+      <div
+        class="color yellow"
+        [ngClass]="{ active: selectedColor === colors.yellow }"
+        (click)="setSelectedColor(colors.yellow)"
+      ></div>
+      <button
+        class="flex justify-center move-layer"
+        (click)="bringToFront()"
+        [disabled]="getIsFront"
+        [ngClass]="{ active: !getIsFront }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="29"
+          height="29"
+          viewBox="0 0 29 29"
+          fill="none"
+        >
+          <path
+            d="M4.99031 19.013L3.85748 21.0523L14.3575 26.8856C14.5308 26.9819 14.7257 27.0324 14.9239 27.0324C15.1221 27.0324 15.317 26.9819 15.4903 26.8856L25.9903 21.0523L24.8575 19.013L14.9245 24.5313L4.99031 19.013Z"
+            fill="white"
+          />
+          <path
+            d="M12.4089 9.57453L3.86037 14.2972C3.67813 14.3979 3.52615 14.5455 3.42019 14.7247C3.31424 14.9039 3.25817 15.1083 3.25781 15.3165C3.25746 15.5247 3.31282 15.7292 3.41816 15.9087C3.5235 16.0883 3.67498 16.2364 3.85687 16.3377L14.3825 22.2177C14.5558 22.3151 14.7512 22.3663 14.95 22.3665C15.1487 22.3667 15.3442 22.3159 15.5177 22.2189L25.992 16.3856C26.174 16.2844 26.3256 16.1363 26.431 15.9568C26.5364 15.7773 26.5919 15.5728 26.5917 15.3646C26.5914 15.1564 26.5355 14.9521 26.4296 14.7728C26.3238 14.5935 26.1719 14.4458 25.9897 14.3451L17.431 9.60182V12.2696L23.0229 15.3682L14.953 19.8634L6.82837 15.3251L12.4089 12.2416V9.57453Z"
+            fill="white"
+          />
+          <path
+            d="M15.9516 1.7931L19.8701 5.71165C20.3258 6.16727 20.3258 6.90596 19.8701 7.36156C19.4145 7.81718 18.6759 7.81718 18.2202 7.36156L16.087 5.22841V14.0798C16.087 14.7242 15.5647 15.2465 14.9204 15.2465C14.276 15.2465 13.7537 14.7242 13.7537 14.0798V5.22841L11.6205 7.36156C11.1649 7.81718 10.4262 7.81718 9.97061 7.36156C9.515 6.90596 9.515 6.16727 9.97061 5.71165L13.8891 1.7931C14.4587 1.22359 15.382 1.22359 15.9516 1.7931Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+      <button
+        class="flex justify-center move-layer"
+        (click)="sendToBack()"
+        [disabled]="getIsBack"
+        [ngClass]="{ active: !getIsBack }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="29"
+          height="29"
+          viewBox="0 0 29 29"
+          fill="none"
+        >
+          <path
+            d="M9.97068 10.9008L13.8892 14.8193C14.4587 15.3889 15.382 15.3889 15.9516 14.8193L19.8701 10.9008C20.3257 10.4452 20.3257 9.70649 19.8701 9.25089C19.4145 8.79527 18.6758 8.79527 18.2202 9.25089L16.087 11.384L16.087 2.53263C16.087 1.88828 15.5647 1.36597 14.9204 1.36597C14.276 1.36597 13.7537 1.88828 13.7537 2.53263L13.7537 11.384L11.6206 9.25088C11.1649 8.79527 10.4263 8.79527 9.97068 9.25088C9.51498 9.70649 9.51498 10.4452 9.97068 10.9008Z"
+            fill="white"
+          />
+          <path
+            d="M4.99031 19.013L3.85748 21.0523L14.3575 26.8856C14.5308 26.9819 14.7257 27.0324 14.9239 27.0324C15.1221 27.0324 15.317 26.9819 15.4903 26.8856L25.9903 21.0523L24.8575 19.013L14.9245 24.5313L4.99031 19.013Z"
+            fill="white"
+          />
+          <path
+            d="M19.6424 13.495L23.0229 15.3682L14.953 19.8634L6.82837 15.325L10.3593 13.374L8.66604 11.6423L3.86037 14.2972C3.67813 14.3979 3.52615 14.5455 3.42019 14.7247C3.31424 14.9039 3.25817 15.1082 3.25781 15.3164C3.25746 15.5246 3.31282 15.7291 3.41816 15.9087C3.5235 16.0883 3.67498 16.2364 3.85687 16.3377L14.3825 22.2177C14.5558 22.3151 14.7512 22.3663 14.95 22.3665C15.1487 22.3667 15.3442 22.3159 15.5177 22.2189L25.992 16.3855C26.174 16.2844 26.3256 16.1363 26.431 15.9568C26.5364 15.7773 26.5919 15.5728 26.5917 15.3646C26.5914 15.1564 26.5355 14.9521 26.4296 14.7728C26.3238 14.5935 26.1719 14.4458 25.9897 14.345L21.3116 11.7524L19.6424 13.495Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+      <button
+        (click)="onZoomChange(zoomOperator.zoomOut)"
+        class="flex justify-center zoom"
+        [disabled]="getZoomValue() <= 1"
+        [ngClass]="{ active: getZoomValue() > 1 }"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
+          <path
+            d="M12.2526 2.53247C17.7294 2.53247 22.1693 6.97231 22.1693 12.4491C22.1693 14.7672 21.374 16.8994 20.0413 18.5879L24.3024 22.849C24.758 23.3046 24.758 24.0434 24.3024 24.4989C23.8468 24.9545 23.1081 24.9545 22.6525 24.4989L18.3914 20.2378C16.7029 21.5705 14.5707 22.3658 12.2526 22.3658C6.77578 22.3658 2.33594 17.9259 2.33594 12.4491C2.33594 6.97231 6.77578 2.53247 12.2526 2.53247ZM12.2526 4.8658C8.06445 4.8658 4.66927 8.26098 4.66927 12.4491C4.66927 16.6374 8.06445 20.0325 12.2526 20.0325C16.4408 20.0325 19.8359 16.6374 19.8359 12.4491C19.8359 8.26098 16.4408 4.8658 12.2526 4.8658ZM16.3359 11.2825C16.9803 11.2825 17.5026 11.8048 17.5026 12.4491C17.5026 13.0935 16.9803 13.6158 16.3359 13.6158H8.16927C7.52494 13.6158 7.0026 13.0935 7.0026 12.4491C7.0026 11.8048 7.52494 11.2825 8.16927 11.2825H16.3359Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+      <button
+        (click)="onZoomChange(zoomOperator.zoomIn)"
+        class="flex justify-center zoom"
+        [disabled]="getZoomValue() >= 2"
+        [ngClass]="{ active: getZoomValue() < 2 }"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
+          <path
+            d="M12.2526 2.53247C17.7294 2.53247 22.1693 6.97231 22.1693 12.4491C22.1693 14.6308 21.4648 16.6479 20.2708 18.2854L20.0413 18.5879L24.3024 22.849C24.758 23.3046 24.758 24.0434 24.3024 24.4989C23.8819 24.9195 23.2201 24.9518 22.7624 24.596L22.6525 24.4989L18.3914 20.2378C16.7029 21.5705 14.5707 22.3658 12.2526 22.3658C6.77578 22.3658 2.33594 17.9259 2.33594 12.4491C2.33594 6.97231 6.77578 2.53247 12.2526 2.53247ZM12.2526 4.8658C8.06445 4.8658 4.66927 8.26098 4.66927 12.4491C4.66927 16.6374 8.06445 20.0325 12.2526 20.0325C16.4408 20.0325 19.8359 16.6374 19.8359 12.4491C19.8359 8.26098 16.4408 4.8658 12.2526 4.8658ZM12.2526 7.19914C12.8509 7.19914 13.344 7.64952 13.4114 8.22975L13.4193 8.3658V11.2825H16.3359C16.9803 11.2825 17.5026 11.8048 17.5026 12.4491C17.5026 13.0475 17.0522 13.5406 16.472 13.608L16.3359 13.6158H13.4193V16.5325C13.4193 17.1768 12.897 17.6991 12.2526 17.6991C11.6543 17.6991 11.1612 17.2488 11.0938 16.6685L11.0859 16.5325V13.6158H8.16927C7.52494 13.6158 7.0026 13.0935 7.0026 12.4491C7.0026 11.8508 7.45299 11.3577 8.03321 11.2903L8.16927 11.2825H11.0859V8.3658C11.0859 7.72148 11.6083 7.19914 12.2526 7.19914Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+      <button
+        (click)="resetZoom()"
+        class="flex justify-center zoom"
+        [disabled]="getZoomValue() === 1 && areTransformsEqual"
+        [ngClass]="{ active: getZoomValue() !== 1 || !areTransformsEqual }"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M7 6.03255C6.69058 6.03255 6.39383 6.15547 6.17504 6.37426C5.95625 6.59305 5.83333 6.8898 5.83333 7.19922V9.53255C5.83333 10.1769 5.311 10.6992 4.66667 10.6992C4.02233 10.6992 3.5 10.1769 3.5 9.53255V7.19922C3.5 6.27096 3.86875 5.38072 4.52513 4.72434C5.1815 4.06797 6.07174 3.69922 7 3.69922H9.33333C9.97766 3.69922 10.5 4.22155 10.5 4.86589C10.5 5.51022 9.97766 6.03255 9.33333 6.03255H7ZM17.5 4.86589C17.5 4.22155 18.0223 3.69922 18.6667 3.69922H21C21.9283 3.69922 22.8185 4.06797 23.4749 4.72434C24.1312 5.38072 24.5 6.27096 24.5 7.19922V9.53255C24.5 10.1769 23.9777 10.6992 23.3333 10.6992C22.689 10.6992 22.1667 10.1769 22.1667 9.53255V7.19922C22.1667 6.8898 22.0437 6.59305 21.825 6.37426C21.6062 6.15547 21.3094 6.03255 21 6.03255H18.6667C18.0223 6.03255 17.5 5.51022 17.5 4.86589ZM4.66667 17.6992C5.311 17.6992 5.83333 18.2216 5.83333 18.8659V21.1992C5.83333 21.5086 5.95625 21.8054 6.17504 22.0242C6.39384 22.243 6.69058 22.3659 7 22.3659H9.33333C9.97766 22.3659 10.5 22.8882 10.5 23.5326C10.5 24.1769 9.97766 24.6992 9.33333 24.6992H7C6.07174 24.6992 5.1815 24.3305 4.52513 23.6741C3.86875 23.0177 3.5 22.1275 3.5 21.1992V18.8659C3.5 18.2216 4.02233 17.6992 4.66667 17.6992ZM23.3333 17.6992C23.9777 17.6992 24.5 18.2216 24.5 18.8659V21.1992C24.5 22.1275 24.1312 23.0177 23.4749 23.6741C22.8185 24.3305 21.9283 24.6992 21 24.6992H18.6667C18.0223 24.6992 17.5 24.1769 17.5 23.5326C17.5 22.8882 18.0223 22.3659 18.6667 22.3659H21C21.3094 22.3659 21.6062 22.243 21.825 22.0242C22.0438 21.8054 22.1667 21.5086 22.1667 21.1992V18.8659C22.1667 18.2216 22.689 17.6992 23.3333 17.6992Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="flex image-container">
+    <div
+      class="image-editor w-full"
+      [ngClass]="{ hidden: isLoading || !isInitialized }"
+    >
+      <div class="canvas-container flex items-center">
+        <canvas #fabricCanvas id="canvas"></canvas>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex tool-container justify-between"
+    (click)="handleToolContainerClick($event)"
+  >
+    <div class="sub-tools-container flex">
+      @if (selectedTool === "draw") {
+      <div class="sub-tools justify-between draw-1">
+        <ng-container>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-1')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 43 42"
+              fill="none"
+            >
+              <path
+                d="M41.2932 5.12231C42.4648 3.95074 42.4648 2.05125 41.2932 0.879666C40.1216 -0.291916 38.2222 -0.291927 37.0506 0.879638L41.2932 5.12231ZM0.171875 39.0005C0.171863 40.6573 1.515 42.0005 3.17185 42.0005L30.1719 42.0007C31.8287 42.0007 33.1719 40.6575 33.1719 39.0007C33.1719 37.3438 31.8287 36.0007 30.1719 36.0007L6.17189 36.0005L6.17206 12.0005C6.17207 10.3437 4.82893 9.0005 3.17208 9.00049C1.51522 9.00047 0.172068 10.3436 0.172057 12.0005L0.171875 39.0005ZM37.0506 0.879638L1.05057 36.8792L5.29318 41.1218L41.2932 5.12231L37.0506 0.879638Z"
+                [attr.fill]="selectedColor"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-2')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M39.5861 3.41447C40.3671 2.63342 40.3671 1.36709 39.5861 0.586041C38.8051 -0.195015 37.5387 -0.195023 36.7577 0.586021L39.5861 3.41447ZM0.171391 38.0002C0.171383 39.1048 1.06681 40.0002 2.17138 40.0002L20.1714 40.0004C21.2759 40.0004 22.1714 39.1049 22.1714 38.0004C22.1714 36.8958 21.276 36.0004 20.1714 36.0004L4.17141 36.0003L4.17151 20.0003C4.17152 18.8957 3.2761 18.0002 2.17153 18.0002C1.06696 18.0002 0.171522 18.8957 0.171514 20.0002L0.171391 38.0002ZM36.7577 0.586021L0.757187 36.586L3.58559 39.4145L39.5861 3.41447L36.7577 0.586021Z"
+                [attr.fill]="selectedColor"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-3')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 43 42"
+              fill="none"
+            >
+              <path
+                d="M3.17188 38.9995L39.1719 3"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-4')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M2.17188 37.999L38.1719 1.99951"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-5')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M2.17188 1.99902L38.1719 1.99902V37.999H2.17188L2.17188 1.99902Z"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-width="4"
+              />
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+      } @if (selectedTool === "tag") {
+      <div class="sub-tools">
+        <ng-container>
+          <button class="add-tag-up">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              viewBox="0 0 25 25"
+              fill="none"
+            >
+              <path
+                d="M6.91895 15.5208L12.934 9.54224L18.9491 15.5208"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <div class="tags-container">
+            @for (tag of tags; track tag; let i = $index) {
+            <button
+              [ngStyle]="{
+                color: [colors.black, colors.blue].includes(selectedColor)
+                  ? colors.white
+                  : colors.black
+              }"
+              class="tags-button flex justify-center items-center relative"
+              (click)="setSelectedSubTool(subToolType.tag, 'tag-' + i)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="62"
+                height="33"
+                viewBox="0 0 62 33"
+                fill="none"
+              >
+                <path
+                  d="M11.5717 1.31677C11.9501 0.821685 12.5376 0.53125 13.1607 0.53125H59.9266C61.0312 0.53125 61.9266 1.42668 61.9266 2.53125V30.5312C61.9266 31.6358 61.0312 32.5312 59.9266 32.5312H13.1607C12.5376 32.5312 11.9501 32.2408 11.5717 31.7457L0.871652 17.7457C0.323701 17.0288 0.323701 16.0337 0.871653 15.3168L11.5717 1.31677Z"
+                  [attr.fill]="selectedColor"
+                />
+              </svg>
+              <span class="absolute">
+                {{ tag }}
+              </span>
+            </button>
+            }
+          </div>
+          <button class="add-tag-down">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              viewBox="0 0 25 25"
+              fill="none"
+            >
+              <path
+                d="M6.17188 9.81152L12.1719 15.7901L18.1719 9.81152"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+      } @if (selectedTool === "text") {
+      <div class="sub-tools">
+        <div class="text-container">
+          <button
+            [ngStyle]="{
+              color: [colors.black, colors.blue].includes(selectedColor)
+                ? colors.white
+                : colors.black,
+              'background-color': selectedColor
+            }"
+            class="text-button flex justify-center items-center relative"
+            (click)="setSelectedSubTool(subToolType.text, 'text-bg')"
+          >
+            กขค..
+          </button>
+          <button
+            [ngStyle]="{
+              color: selectedColor
+            }"
+            class="text-button flex justify-center items-center relative"
+            (click)="setSelectedSubTool(subToolType.text, 'text-no-bg')"
+          >
+            กขค..
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+    <div class="tools">
+      <button
+        class="tool-button"
+        [ngStyle]="{ 'background-color': '#000000' }"
+        (click)="handleClear()"
+        [disabled]="isDisabledClear || isLoading"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="33"
+          height="33"
+          viewBox="0 0 33 33"
+          fill="none"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M23.2425 3.68309C23.5199 3.00093 24.2977 2.67276 24.9799 2.95009C25.6133 3.20761 25.9414 3.89669 25.7631 4.53999L25.7128 4.68741L22.2332 13.2461L23.1089 13.4808C24.5087 13.8558 25.6732 14.9922 25.8944 16.5448C26.0841 17.8774 26.2621 19.904 26.0176 21.9922C25.7753 24.0616 25.0976 26.3627 23.422 28.0532C22.806 28.6747 21.9212 28.7739 21.3239 28.784C20.6431 28.7956 19.8573 28.6911 19.0515 28.531C17.4293 28.2088 15.4851 27.6116 13.6461 26.9759L13.0936 26.7826L12.0093 26.3914L10.9689 26.0026L9.99172 25.6265L8.68686 25.1091L7.59149 24.6615L6.5012 24.2016C6.05872 24.0098 5.75788 23.6099 5.69784 23.1439C5.6378 22.6779 5.82741 22.2147 6.19697 21.9247C8.03319 20.4833 9.75753 18.8281 11.2127 17.2993L11.9171 16.547C12.0305 16.4239 12.1419 16.302 12.2511 16.1817L12.88 15.4787C12.9803 15.365 13.0783 15.2531 13.1738 15.1433L13.9661 14.2162L14.4145 13.6756C15.3665 12.5148 16.8909 11.93 18.3903 12.2258L18.6545 12.2872L19.6375 12.5506L23.2425 3.68309ZM14.2051 17.9968C12.9108 19.4218 11.3203 21.052 9.56753 22.5888C10.3348 22.8986 11.1048 23.2015 11.8783 23.4955C12.666 22.9456 13.3068 22.2866 13.7796 21.7118C14.0088 21.4333 14.2313 21.1431 14.4293 20.8391L14.6185 20.5303C14.9765 19.888 15.7867 19.6576 16.4299 20.0147C17.0737 20.372 17.3059 21.1838 16.9484 21.8275C16.6364 22.3882 16.2455 22.9119 15.8389 23.406C15.5485 23.759 15.1963 24.151 14.7832 24.5468C15.3995 24.7574 16.0144 24.9583 16.6128 25.1419C17.1092 24.7991 17.6923 24.0948 18.2201 23.2952C18.432 22.9745 18.6342 22.6458 18.8225 22.3097L19.0952 21.7972C19.4217 21.1374 20.2215 20.8667 20.8815 21.1931C21.5416 21.5195 21.812 22.3192 21.4856 22.9792C21.1804 23.5958 20.8243 24.191 20.4456 24.7646C20.214 25.1152 19.9291 25.5202 19.6008 25.9214L20.1617 26.0317C20.6441 26.1204 21.1535 26.1833 21.6132 26.0879C22.6353 25.002 23.1651 23.4243 23.3691 21.682C23.4164 21.278 23.4451 20.874 23.4593 20.4764L14.2051 17.9968ZM17.9644 14.863C17.4401 14.7226 16.8515 14.9095 16.4764 15.3667L16.1529 15.758L23.3499 17.6864L23.2875 17.1632C23.2766 17.0801 23.2656 16.9993 23.2544 16.9208C23.2063 16.5835 22.9671 16.2658 22.5735 16.108L22.4188 16.0566L17.9644 14.863ZM7.62554 10.4872L7.71054 10.673C8.07424 11.4254 8.64718 12.057 9.36046 12.492L9.4929 12.5696C9.55445 12.6043 9.55445 12.6929 9.4929 12.7275L9.36046 12.8051C8.64718 13.2402 8.07424 13.8718 7.71054 14.6242L7.62554 14.8099C7.59224 14.8848 7.48589 14.8848 7.45258 14.8099L7.36758 14.6242C7.00389 13.8718 6.43094 13.2402 5.71766 12.8051L5.58522 12.7275C5.52368 12.6929 5.52368 12.6043 5.58522 12.5696L5.71766 12.492C6.43094 12.057 7.00389 11.4254 7.36758 10.673L7.45258 10.4872C7.48589 10.4123 7.59224 10.4123 7.62554 10.4872ZM11.4013 4.00877C11.4543 3.88949 11.6236 3.88949 11.6766 4.00877L11.8119 4.30446C12.3908 5.50208 13.3028 6.5074 14.4381 7.19989L14.6489 7.32342C14.7469 7.37853 14.7469 7.51957 14.6489 7.57468L14.4381 7.6982C13.3028 8.3907 12.3908 9.39601 11.8119 10.5936L11.6766 10.8893C11.6236 11.0086 11.4543 11.0086 11.4013 10.8893L11.266 10.5936C10.6871 9.39602 9.7751 8.3907 8.63976 7.6982L8.42894 7.57468C8.33098 7.51957 8.33098 7.37853 8.42894 7.32342L8.63976 7.19989C9.7751 6.5074 10.6871 5.50208 11.266 4.30446L11.4013 4.00877Z"
+            fill="white"
+          />
+        </svg>
+      </button>
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'draw' }"
+        (click)="setSelectedTool('draw')"
+      >
+        @if (selectedTool === "draw") {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="7"
+          height="13"
+          viewBox="0 0 7 13"
+          fill="none"
+          style="position: absolute; left: -8px; width: 18px; height: 18px"
+        >
+          <path
+            d="M6.39844 6.69922L-0.601562 0.699219V12.6992L6.39844 6.69922Z"
+            fill="#999999"
+          />
+        </svg>
+        }
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+        >
+          <path
+            d="M21.3825 4.01948C22.882 2.51986 25.2761 2.45987 26.8473 3.83953L27.0393 4.01948L27.9821 4.96228C29.4817 6.4619 29.5417 8.85598 28.162 10.4271L27.9821 10.6191L13.0324 25.5689C12.8203 25.7809 12.564 25.9418 12.283 26.0409L12.0679 26.1034L6.12799 27.4742C5.21761 27.6842 4.39653 26.9224 4.50122 26.0244L4.52739 25.8737L5.89812 19.9337C5.96556 19.6415 6.09759 19.3692 6.28341 19.1363L6.4327 18.9693L21.3825 4.01948ZM20.4396 8.7336L8.45351 20.7197L7.60498 24.3966L11.2819 23.5481L23.2679 11.562L20.4396 8.7336ZM25.1537 5.90509C24.6731 5.42445 23.9167 5.38748 23.3937 5.79418L23.2681 5.90509L22.3251 6.84799L25.1536 9.67641L26.0965 8.73352C26.5771 8.25288 26.6141 7.49657 26.2074 6.97352L26.0965 6.84791L25.1537 5.90509Z"
+            [attr.fill]="selectedTool === 'draw' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'tag' }"
+        (click)="setSelectedTool('tag')"
+      >
+        @if (selectedTool === "tag") {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="7"
+          height="13"
+          viewBox="0 0 7 13"
+          fill="none"
+          style="position: absolute; left: -8px; width: 18px; height: 18px"
+        >
+          <path
+            d="M6.39844 6.69922L-0.601562 0.699219V12.6992L6.39844 6.69922Z"
+            fill="#999999"
+          />
+        </svg>
+        }
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="33"
+          height="33"
+          viewBox="0 0 33 33"
+          fill="none"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M7.23458 5.98748C8.1819 4.85577 9.58193 4.2019 11.0578 4.2019H25.0923C27.8459 4.2019 30.0782 6.43415 30.0782 9.18777V23.2108C30.0782 25.9644 27.8459 28.1967 25.0923 28.1967H11.0578C9.5819 28.1967 8.1818 27.5427 7.23448 26.4109L1.36563 19.399C-0.184428 17.5471 -0.184371 14.8505 1.36577 12.9986L7.23458 5.98748ZM11.0578 7.18941C10.4663 7.18941 9.90512 7.45148 9.52543 7.90508L3.65662 14.9162C3.03532 15.6585 3.0353 16.7393 3.65657 17.4816L9.52542 24.4934C9.90511 24.9471 10.4663 25.2092 11.0578 25.2092H25.0923C26.196 25.2092 27.0907 24.3145 27.0907 23.2108V9.18777C27.0907 8.08411 26.196 7.18941 25.0923 7.18941H11.0578Z"
+            [attr.fill]="selectedTool === 'tag' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'text' }"
+        (click)="setSelectedTool('text')"
+      >
+        @if (selectedTool === "text") {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="7"
+          height="13"
+          viewBox="0 0 7 13"
+          fill="none"
+          style="position: absolute; left: -8px; width: 18px; height: 18px"
+        >
+          <path
+            d="M6.39844 6.69922L-0.601562 0.699219V12.6992L6.39844 6.69922Z"
+            fill="#999999"
+          />
+        </svg>
+        }
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="33"
+          height="33"
+          viewBox="0 0 33 33"
+          fill="none"
+        >
+          <path
+            d="M6.88281 5.36597C5.77824 5.36597 4.88281 6.26139 4.88281 7.36597C4.88281 8.47054 5.77824 9.36597 6.88281 9.36597H14.2161V28.6993C14.2161 29.8038 15.1116 30.6993 16.2161 30.6993C17.3207 30.6993 18.2161 29.8038 18.2161 28.6993V9.36597H25.5495C26.654 9.36597 27.5495 8.47054 27.5495 7.36597C27.5495 6.26139 26.654 5.36597 25.5495 5.36597H6.88281Z"
+            [attr.fill]="selectedTool === 'text' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+    </div>
+    <div class="action-save">
+      <button class="save" (click)="saveCanvas()" [disabled]="isSaveLoading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39 39" fill="none">
+          <path
+            d="M8.13281 11.6278C8.13281 10.7185 8.49404 9.84641 9.13702 9.20342C9.78 8.56044 10.6521 8.19922 11.5614 8.19922H25.9254C26.8346 8.19941 27.7066 8.56076 28.3494 9.20379L31.1282 11.9826C31.7713 12.6255 32.1326 13.4974 32.1328 14.4066V28.7706C32.1328 29.68 31.7716 30.552 31.1286 31.195C30.4856 31.838 29.6136 32.1992 28.7042 32.1992H11.5614C10.6521 32.1992 9.78 31.838 9.13702 31.195C8.49404 30.552 8.13281 29.68 8.13281 28.7706V11.6278ZM11.5614 9.9135C11.1067 9.9135 10.6707 10.0941 10.3492 10.4156C10.0277 10.7371 9.8471 11.1731 9.8471 11.6278V28.7706C9.8471 29.2253 10.0277 29.6613 10.3492 29.9828C10.6707 30.3043 11.1067 30.4849 11.5614 30.4849V22.7706C11.5614 22.0887 11.8323 21.4346 12.3145 20.9524C12.7968 20.4701 13.4508 20.1992 14.1328 20.1992H26.1328C26.8148 20.1992 27.4689 20.4701 27.9511 20.9524C28.4333 21.4346 28.7042 22.0887 28.7042 22.7706V30.4849C29.1589 30.4849 29.5949 30.3043 29.9164 29.9828C30.2379 29.6613 30.4185 29.2253 30.4185 28.7706V14.4066C30.4184 13.952 30.2378 13.5161 29.9162 13.1946L27.1374 10.4158C26.816 10.0943 26.38 9.9136 25.9254 9.9135H25.2757V14.1992C25.2757 14.8812 25.0048 15.5353 24.5225 16.0175C24.0403 16.4997 23.3862 16.7706 22.7042 16.7706H15.8471C15.1651 16.7706 14.5111 16.4997 14.0288 16.0175C13.5466 15.5353 13.2757 14.8812 13.2757 14.1992V9.9135H11.5614ZM14.99 9.9135V14.1992C14.99 14.4265 15.0803 14.6446 15.241 14.8053C15.4018 14.9661 15.6198 15.0564 15.8471 15.0564H22.7042C22.9316 15.0564 23.1496 14.9661 23.3103 14.8053C23.4711 14.6446 23.5614 14.4265 23.5614 14.1992V9.9135H14.99ZM26.99 30.4849V22.7706C26.99 22.5433 26.8997 22.3253 26.7389 22.1646C26.5782 22.0038 26.3601 21.9135 26.1328 21.9135H14.1328C13.9055 21.9135 13.6875 22.0038 13.5267 22.1646C13.366 22.3253 13.2757 22.5433 13.2757 22.7706V30.4849H26.99Z"
+            fill="white"
+          />
+        </svg>
+        @if (isSaveLoading) {
+        <div class="action-text text-[8px]">กำลังบันทึก..</div>
+        } @else {
+        <div class="action-text">บันทึก</div>
+
+        }
+      </button>
+    </div>
+  </div>
+</div>
+} @if (isDesktop()) {
+<div
+  class="editor-container-desktop relative min-h-[100vh] max-h-[100vh] h-[100vh]"
+>
+  @if (isEditing()) {
+  <div class="tools-container-desktop">
+    <div class="tools-desktop">
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'draw' }"
+        (click)="setSelectedTool('draw')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+        >
+          <path
+            d="M21.3825 4.01948C22.882 2.51986 25.2761 2.45987 26.8473 3.83953L27.0393 4.01948L27.9821 4.96228C29.4817 6.4619 29.5417 8.85598 28.162 10.4271L27.9821 10.6191L13.0324 25.5689C12.8203 25.7809 12.564 25.9418 12.283 26.0409L12.0679 26.1034L6.12799 27.4742C5.21761 27.6842 4.39653 26.9224 4.50122 26.0244L4.52739 25.8737L5.89812 19.9337C5.96556 19.6415 6.09759 19.3692 6.28341 19.1363L6.4327 18.9693L21.3825 4.01948ZM20.4396 8.7336L8.45351 20.7197L7.60498 24.3966L11.2819 23.5481L23.2679 11.562L20.4396 8.7336ZM25.1537 5.90509C24.6731 5.42445 23.9167 5.38748 23.3937 5.79418L23.2681 5.90509L22.3251 6.84799L25.1536 9.67641L26.0965 8.73352C26.5771 8.25288 26.6141 7.49657 26.2074 6.97352L26.0965 6.84791L25.1537 5.90509Z"
+            [attr.fill]="selectedTool === 'draw' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'tag' }"
+        (click)="setSelectedTool('tag')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="33"
+          height="33"
+          viewBox="0 0 33 33"
+          fill="none"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M7.23458 5.98748C8.1819 4.85577 9.58193 4.2019 11.0578 4.2019H25.0923C27.8459 4.2019 30.0782 6.43415 30.0782 9.18777V23.2108C30.0782 25.9644 27.8459 28.1967 25.0923 28.1967H11.0578C9.5819 28.1967 8.1818 27.5427 7.23448 26.4109L1.36563 19.399C-0.184428 17.5471 -0.184371 14.8505 1.36577 12.9986L7.23458 5.98748ZM11.0578 7.18941C10.4663 7.18941 9.90512 7.45148 9.52543 7.90508L3.65662 14.9162C3.03532 15.6585 3.0353 16.7393 3.65657 17.4816L9.52542 24.4934C9.90511 24.9471 10.4663 25.2092 11.0578 25.2092H25.0923C26.196 25.2092 27.0907 24.3145 27.0907 23.2108V9.18777C27.0907 8.08411 26.196 7.18941 25.0923 7.18941H11.0578Z"
+            [attr.fill]="selectedTool === 'tag' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+      <button
+        class="tool-button"
+        [ngClass]="{ active: selectedTool === 'text' }"
+        (click)="setSelectedTool('text')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="33"
+          height="33"
+          viewBox="0 0 33 33"
+          fill="none"
+        >
+          <path
+            d="M6.88281 5.36597C5.77824 5.36597 4.88281 6.26139 4.88281 7.36597C4.88281 8.47054 5.77824 9.36597 6.88281 9.36597H14.2161V28.6993C14.2161 29.8038 15.1116 30.6993 16.2161 30.6993C17.3207 30.6993 18.2161 29.8038 18.2161 28.6993V9.36597H25.5495C26.654 9.36597 27.5495 8.47054 27.5495 7.36597C27.5495 6.26139 26.654 5.36597 25.5495 5.36597H6.88281Z"
+            [attr.fill]="selectedTool === 'text' ? 'black' : 'white'"
+          />
+        </svg>
+      </button>
+    </div>
+    <div class="sub-tools-container-desktop">
+      @if (selectedTool === "draw") {
+      <div class="sub-tools-desktop justify-between draw-1">
+        <ng-container>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-1')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 43 42"
+              fill="none"
+            >
+              <path
+                d="M41.2932 5.12231C42.4648 3.95074 42.4648 2.05125 41.2932 0.879666C40.1216 -0.291916 38.2222 -0.291927 37.0506 0.879638L41.2932 5.12231ZM0.171875 39.0005C0.171863 40.6573 1.515 42.0005 3.17185 42.0005L30.1719 42.0007C31.8287 42.0007 33.1719 40.6575 33.1719 39.0007C33.1719 37.3438 31.8287 36.0007 30.1719 36.0007L6.17189 36.0005L6.17206 12.0005C6.17207 10.3437 4.82893 9.0005 3.17208 9.00049C1.51522 9.00047 0.172068 10.3436 0.172057 12.0005L0.171875 39.0005ZM37.0506 0.879638L1.05057 36.8792L5.29318 41.1218L41.2932 5.12231L37.0506 0.879638Z"
+                [attr.fill]="selectedColor"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-2')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M39.5861 3.41447C40.3671 2.63342 40.3671 1.36709 39.5861 0.586041C38.8051 -0.195015 37.5387 -0.195023 36.7577 0.586021L39.5861 3.41447ZM0.171391 38.0002C0.171383 39.1048 1.06681 40.0002 2.17138 40.0002L20.1714 40.0004C21.2759 40.0004 22.1714 39.1049 22.1714 38.0004C22.1714 36.8958 21.276 36.0004 20.1714 36.0004L4.17141 36.0003L4.17151 20.0003C4.17152 18.8957 3.2761 18.0002 2.17153 18.0002C1.06696 18.0002 0.171522 18.8957 0.171514 20.0002L0.171391 38.0002ZM36.7577 0.586021L0.757187 36.586L3.58559 39.4145L39.5861 3.41447L36.7577 0.586021Z"
+                [attr.fill]="selectedColor"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-3')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 43 42"
+              fill="none"
+            >
+              <path
+                d="M3.17188 38.9995L39.1719 3"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-4')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M2.17188 37.999L38.1719 1.99951"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-5')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 41 40"
+              fill="none"
+            >
+              <path
+                d="M2.17188 1.99902L38.1719 1.99902V37.999H2.17188L2.17188 1.99902Z"
+                [attr.stroke]="selectedColor"
+                stroke-width="6"
+                stroke-width="4"
+              />
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+      } @if (selectedTool === "tag") {
+      <div class="sub-tools-desktop">
+        <ng-container>
+          <button class="add-tag-up-desktop">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              viewBox="0 0 25 25"
+              fill="none"
+            >
+              <path
+                d="M6.91895 15.5208L12.934 9.54224L18.9491 15.5208"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <div class="bottom-gradient"></div>
+          </button>
+          <div class="tags-container">
+            @for (tag of tags; track tag; let i = $index) {
+            <button
+              [ngStyle]="{
+                color: [colors.black, colors.blue].includes(selectedColor)
+                  ? colors.white
+                  : colors.black
+              }"
+              class="tags-button flex justify-center items-center relative"
+              (click)="setSelectedSubTool(subToolType.tag, 'tag-' + i)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="62"
+                height="33"
+                viewBox="0 0 62 33"
+                fill="none"
+              >
+                <path
+                  d="M11.5717 1.31677C11.9501 0.821685 12.5376 0.53125 13.1607 0.53125H59.9266C61.0312 0.53125 61.9266 1.42668 61.9266 2.53125V30.5312C61.9266 31.6358 61.0312 32.5312 59.9266 32.5312H13.1607C12.5376 32.5312 11.9501 32.2408 11.5717 31.7457L0.871652 17.7457C0.323701 17.0288 0.323701 16.0337 0.871653 15.3168L11.5717 1.31677Z"
+                  [attr.fill]="selectedColor"
+                />
+              </svg>
+              <span class="absolute">
+                {{ tag }}
+              </span>
+            </button>
+            }
+          </div>
+          <button class="add-tag-down-desktop">
+            <div class="top-gradient"></div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              viewBox="0 0 25 25"
+              fill="none"
+            >
+              <path
+                d="M6.17188 9.81152L12.1719 15.7901L18.1719 9.81152"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+      } @if (selectedTool === "text") {
+      <div class="sub-tools-desktop">
+        <div class="text-container">
+          <button
+            [ngStyle]="{
+              color: [colors.black, colors.blue].includes(selectedColor)
+                ? colors.white
+                : colors.black,
+              'background-color': selectedColor
+            }"
+            class="text-button flex justify-center items-center relative"
+            (click)="setSelectedSubTool(subToolType.text, 'text-bg')"
+          >
+            กขค..
+          </button>
+          <button
+            [ngStyle]="{
+              color: selectedColor
+            }"
+            class="text-button flex justify-center items-center relative"
+            (click)="setSelectedSubTool(subToolType.text, 'text-no-bg')"
+          >
+            กขค..
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+  <div
+    class="image-editor-desktop w-full"
+    [ngClass]="{ hidden: isLoading || !isInitialized }"
+  >
+    <div class="canvas-container flex items-center">
+      <canvas #fabricCanvas id="canvas"></canvas>
+    </div>
+    @if (isEditing()) {
+    <div
+      class="actions-desktop"
+      [ngClass]="{
+        'w-[calc(100dvw-113px)]': isEditing(),
+      }"
+    >
+      <div class="actions-colors-buttons">
+        <div class="flex w-full justify-start gap-6 min-w-[390px]">
+          <div
+            class="color white"
+            [ngClass]="{ active: selectedColor === colors.white }"
+            (click)="setSelectedColor(colors.white)"
+          ></div>
+          <div
+            class="color black"
+            [ngClass]="{ active: selectedColor === colors.black }"
+            (click)="setSelectedColor(colors.black)"
+          ></div>
+          <div
+            class="color blue"
+            [ngClass]="{ active: selectedColor === colors.blue }"
+            (click)="setSelectedColor(colors.blue)"
+          ></div>
+          <div
+            class="color yellow"
+            [ngClass]="{ active: selectedColor === colors.yellow }"
+            (click)="setSelectedColor(colors.yellow)"
+          ></div>
+          <button
+            class="flex justify-center move-layer"
+            (click)="bringToFront()"
+            [disabled]="getIsFront"
+            [ngClass]="{ active: !getIsFront }"
+          >
+            <svg
+              width="29"
+              height="28"
+              viewBox="0 0 29 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.85506 18.8111L3.72223 20.8504L14.2222 26.6837C14.3955 26.78 14.5904 26.8305 14.7886 26.8305C14.9868 26.8305 15.1818 26.78 15.3551 26.6837L25.8551 20.8504L24.7222 18.8111L14.7892 24.3294L4.85506 18.8111Z"
+                fill="white"
+              />
+              <path
+                d="M12.2736 9.37262L3.72512 14.0953C3.54288 14.196 3.39089 14.3436 3.28494 14.5228C3.17898 14.702 3.12292 14.9064 3.12256 15.1145C3.1222 15.3227 3.17757 15.5272 3.28291 15.7068C3.38825 15.8864 3.53972 16.0345 3.72162 16.1358L14.2473 22.0158C14.4206 22.1132 14.616 22.1644 14.8147 22.1646C15.0135 22.1648 15.209 22.114 15.3825 22.017L25.8568 16.1837C26.0387 16.0825 26.1903 15.9344 26.2957 15.7549C26.4012 15.5754 26.4567 15.3709 26.4564 15.1627C26.4562 14.9545 26.4002 14.7502 26.2944 14.5709C26.1885 14.3916 26.0366 14.2439 25.8544 14.1432L17.2957 9.39992V12.0677L22.8876 15.1663L14.8178 19.6615L6.69312 15.1232L12.2736 12.0397V9.37262Z"
+                fill="white"
+              />
+              <path
+                d="M15.8163 1.59119L19.7348 5.50975C20.1905 5.96537 20.1905 6.70405 19.7348 7.15966C19.2792 7.61528 18.5406 7.61528 18.0849 7.15966L15.9518 5.0265V13.8779C15.9518 14.5223 15.4295 15.0446 14.7851 15.0446C14.1408 15.0446 13.6184 14.5223 13.6184 13.8779V5.0265L11.4853 7.15966C11.0297 7.61528 10.291 7.61528 9.83536 7.15966C9.37975 6.70405 9.37975 5.96537 9.83536 5.50975L13.7539 1.59119C14.3235 1.02169 15.2468 1.02169 15.8163 1.59119Z"
+                fill="white"
+              />
+            </svg>
+          </button>
+          <button
+            class="flex justify-center move-layer"
+            (click)="sendToBack()"
+            [disabled]="getIsBack"
+            [ngClass]="{ active: !getIsBack }"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="29"
+              height="29"
+              viewBox="0 0 29 29"
+              fill="none"
+            >
+              <path
+                d="M9.97068 10.9008L13.8892 14.8193C14.4587 15.3889 15.382 15.3889 15.9516 14.8193L19.8701 10.9008C20.3257 10.4452 20.3257 9.70649 19.8701 9.25089C19.4145 8.79527 18.6758 8.79527 18.2202 9.25089L16.087 11.384L16.087 2.53263C16.087 1.88828 15.5647 1.36597 14.9204 1.36597C14.276 1.36597 13.7537 1.88828 13.7537 2.53263L13.7537 11.384L11.6206 9.25088C11.1649 8.79527 10.4263 8.79527 9.97068 9.25088C9.51498 9.70649 9.51498 10.4452 9.97068 10.9008Z"
+                fill="white"
+              />
+              <path
+                d="M4.99031 19.013L3.85748 21.0523L14.3575 26.8856C14.5308 26.9819 14.7257 27.0324 14.9239 27.0324C15.1221 27.0324 15.317 26.9819 15.4903 26.8856L25.9903 21.0523L24.8575 19.013L14.9245 24.5313L4.99031 19.013Z"
+                fill="white"
+              />
+              <path
+                d="M19.6424 13.495L23.0229 15.3682L14.953 19.8634L6.82837 15.325L10.3593 13.374L8.66604 11.6423L3.86037 14.2972C3.67813 14.3979 3.52615 14.5455 3.42019 14.7247C3.31424 14.9039 3.25817 15.1082 3.25781 15.3164C3.25746 15.5246 3.31282 15.7291 3.41816 15.9087C3.5235 16.0883 3.67498 16.2364 3.85687 16.3377L14.3825 22.2177C14.5558 22.3151 14.7512 22.3663 14.95 22.3665C15.1487 22.3667 15.3442 22.3159 15.5177 22.2189L25.992 16.3855C26.174 16.2844 26.3256 16.1363 26.431 15.9568C26.5364 15.7773 26.5919 15.5728 26.5917 15.3646C26.5914 15.1564 26.5355 14.9521 26.4296 14.7728C26.3238 14.5935 26.1719 14.4458 25.9897 14.345L21.3116 11.7524L19.6424 13.495Z"
+                fill="white"
+              />
+            </svg>
+          </button>
+          <button
+            class="flex justify-center clear-icon"
+            (click)="handleClear()"
+            [disabled]="isDisabledClear || isLoading"
+            [ngClass]="{ active: !isDisabledClear }"
+          >
+            ล้าง
+          </button>
+        </div>
+      </div>
+      <div class="actions-save-buttons">
+        <button
+          class="desktop-save"
+          [disabled]="isSaveLoading"
+          (click)="saveCanvas()"
+        >
+          @if (isSaveLoading) {
+          <span
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          >
+            <span class="visually-hidden">กำลังบันทึก...</span>
+          </span>
+          } @else { บันทึก }
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}

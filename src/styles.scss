@@ -1,1 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: "Noto Sans Thai";
+  font-style: normal;
+  font-weight: 400; // Regular
+  src: url("./app/fonts/NotoSansThai-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Noto Sans Thai";
+  font-style: normal;
+  font-weight: 500; // Medium
+  src: url("./app/fonts/NotoSansThai-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Noto Sans Thai";
+  font-style: normal;
+  font-weight: 600; // Bold
+  src: url("./app/fonts/NotoSansThai-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Noto Sans Thai";
+  font-style: normal;
+  font-weight: 700; // Bold
+  src: url("./app/fonts/NotoSansThai-Bold.ttf") format("truetype");
+}
+
+:host {
+  font-family: "Noto Sans Thai", sans-serif !important;
+}
