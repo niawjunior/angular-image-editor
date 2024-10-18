@@ -1,6 +1,9 @@
-#### This project is an image editor built with Angular and Fabric.js, designed to provide a smooth editing experience across both desktop and mobile platforms. The editor supports common shape drawing, adding tags, freehand text, and managing layers, with zoom and layer manipulation features.
+This project is an image editor built with Angular and Fabric.js, designed to provide a smooth editing experience across both desktop and mobile platforms. The editor supports common shape drawing, adding tags, freehand text, and managing layers, with zoom and layer manipulation features.
+
 ## Live https://angular-image-editor.netlify.app
+
 # Vdieo Demo
+
 https://github.com/user-attachments/assets/c74eadcf-e556-4242-bf62-566283222b30
 
 ## Desktop
@@ -13,14 +16,14 @@ https://github.com/user-attachments/assets/c74eadcf-e556-4242-bf62-566283222b30
 
 ## Features
 
-- Common Shapes: Draw basic shapes such as rectangles, circles, and lines.
-- Tags: Add customizable tags to images for annotations or labels.
-- Free Text: Insert and style free text on your images.
-- Zoom In/Out: Easily zoom in and out to edit your image in detail.
-- Layer Management: Move layers to the top or send them to the back.
-- Clear all layers with a single click.
-- Local Storage: Save your edited image and data in local storage.
-- Cross-Platform Compatibility: Works seamlessly on both desktop and mobile devices.
+- 🎨 Common Shapes: Draw basic shapes such as rectangles, circles, and lines.
+- 🏷️ Tags: Add customizable tags to images for annotations or labels.
+- 📝 Free Text: Insert and style free text on your images.
+- 🔍 Zoom In/Out: Easily zoom in and out to edit your image in detail.
+- 📑 Layer Management: Move layers to the top or send them to the back.
+- 🗑️ Clear All Layers: Clear all layers with a single click.
+- 💾 Local Storage: Save your edited image and data in local storage.
+- 💻📱 Cross-Platform Compatibility: Works seamlessly on both desktop and mobile devices.
 
 # AngularFabricJs
 
