@@ -1,33 +1,35 @@
-#Desktop
+#### This project is an image editor built with Angular and Fabric.js, designed to provide a smooth editing experience across both desktop and mobile platforms. The editor supports common shape drawing, adding tags, freehand text, and managing layers, with zoom and layer manipulation features.
+
+## Desktop
+
 ![alt text](desktop.png)
 
-#Mobile
+## Mobile
+
 ![alt text](mobile.png)
+
+## Features
+
+- Common Shapes: Draw basic shapes such as rectangles, circles, and lines.
+- Tags: Add customizable tags to images for annotations or labels.
+- Free Text: Insert and style free text on your images.
+- Zoom In/Out: Easily zoom in and out to edit your image in detail.
+- Layer Management: Move layers to the top or send them to the back.
+- Clear all layers with a single click.
+- Local Storage: Save your edited image and data in local storage.
+- Cross-Platform Compatibility: Works seamlessly on both desktop and mobile devices.
 
 # AngularFabricJs
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
 
-## Development server
+# Getting Started
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Clone this repository and follow the installation instructions to get the Angular image editor up and running.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+git clone https://github.com/niawjunior/angular-image-editor.git
+cd angular-image-editor
+npm install
+ng serve
+```
