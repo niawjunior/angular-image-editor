@@ -1,10 +1,11 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ImageEditorComponent } from './components/image-editor/image-editor.component';
 import { DeviceService } from './services/device.service';
+import { LoadingComponent } from './components/loading/loading.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ImageEditorComponent],
+  imports: [ImageEditorComponent, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

@@ -22,7 +22,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import {
   Canvas,
   Control,
@@ -42,6 +41,7 @@ import {
 } from 'fabric';
 import Hammer from 'hammerjs';
 import { v4 as uuidv4 } from 'uuid';
+import { LoadingService } from '../../services/loading.service';
 
 declare module 'fabric' {
   // to have the properties recognized on the instance and in the constructor
@@ -268,7 +268,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private loadingService: LoadingService) {
     effect(() => {
       // If 'isEditing' has changed and it's on desktop, resize canvas
       console.log;
@@ -305,7 +305,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const portrait = window.matchMedia('(orientation: portrait)');
     this.isPortrait = portrait?.matches;
     // Combine observables to get route parameters and parent parameters
-
+    this.loadingService.show();
     this.initializeListData();
     // Listen for changes in device orientation
 
@@ -800,7 +800,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           this.resizeCanvas();
           this.isLoading = false;
           this.isInitialized = true;
-
+          this.loadingService.clear();
           this.jsonData = this.canvasFabric?.toJSON();
 
           this.onFabricLoaded.emit(true);
@@ -832,7 +832,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
           this.isInitialized = true;
           this.jsonData = this.canvasFabric?.toJSON();
-
+          this.loadingService.clear();
           this.onFabricLoaded.emit(true);
         }
       });
@@ -1668,6 +1668,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async saveCanvas() {
+    this.loadingService.show();
     this.isSaveLoading = true;
     // Asynchronously call handleOnSaveImages method
     await this.handleOnSaveImages();
@@ -1706,6 +1707,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       localStorage.setItem('damage', jsonToString);
       setTimeout(() => {
         this.isSaveLoading = false;
+        this.loadingService.clear();
       }, 500);
       return formData;
     } catch (error) {

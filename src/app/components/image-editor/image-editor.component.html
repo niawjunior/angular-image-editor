@@ -434,12 +434,8 @@
             fill="white"
           />
         </svg>
-        @if (isSaveLoading) {
-        <div class="action-text text-[8px]">กำลังบันทึก..</div>
-        } @else {
-        <div class="action-text">บันทึก</div>
 
-        }
+        <div class="action-text">บันทึก</div>
       </button>
     </div>
   </div>
@@ -787,15 +783,7 @@
           [disabled]="isSaveLoading"
           (click)="saveCanvas()"
         >
-          @if (isSaveLoading) {
-          <span
-            class="spinner-border spinner-border-sm"
-            role="status"
-            aria-hidden="true"
-          >
-            <span class="visually-hidden">กำลังบันทึก...</span>
-          </span>
-          } @else { บันทึก }
+          บันทึก
         </button>
       </div>
     </div>
