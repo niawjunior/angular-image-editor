@@ -312,6 +312,25 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // Listen for changes in device orientation
 
     // Subscribe to handleCancel event to handle cancellation actions
+
+    portrait.addEventListener('change', async (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        // If in portrait mode, set flag and reset initialization status
+
+        this.isPortrait = true;
+        this.isInitialized = false;
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      } else {
+        // If not in portrait mode, reload the page to adjust layout
+
+        this.isPortrait = false;
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
+    });
   }
 
   /**

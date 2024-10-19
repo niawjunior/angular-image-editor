@@ -1,4 +1,20 @@
-@if (!isDesktop()) {
+@if (!isDesktop()) { @if (isPortrait) {
+<div class="portrait-alert">
+  <div class="portrait-text-container">
+    <div class="portrait-alert-icon"></div>
+    <div class="portrait-alert-text">
+      <span class="w-full">กรุณาหมุนโทรศัพท์เป็นแนวนอน</span>
+      <span class="w-full">เพื่อใช้งาน</span>
+      <span class="w-full text-[0.875rem] mt-2 text-white opacity-60">
+        หากหมุนไม่ได้ กรุณาตรวจสอบการตั้งค่า
+      </span>
+      <span class="w-full text-[0.875rem] text-white opacity-60">
+        “การหมุนหน้าจออัตโนมัติ”
+      </span>
+    </div>
+  </div>
+</div>
+}
 <div class="editor-container relative">
   <div class="header" (click)="handleHeaderClick($event)">
     <div class="flex flex-col h-full w-full items-center justify-between">
