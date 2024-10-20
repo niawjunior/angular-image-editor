@@ -1887,4 +1887,28 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this._percentageValue = value;
     this.updateZoomLevel();
   }
+
+  handleDownload() {
+    this.isLoading = true;
+    // Reset zoom and prepare canvas for download
+    this.resetZoom();
+    this.canvasFabric.discardActiveObject();
+    this.canvasFabric.renderAll();
+
+    // Convert canvas to data URL
+    const canvasDataUrl = this.canvasFabric.toDataURL({
+      format: 'jpeg', // You can change this to 'png' if you prefer PNG format
+      multiplier: 1, // Keep the original resolution
+    });
+
+    // Create a link element
+    const link = document.createElement('a');
+    link.href = canvasDataUrl;
+    link.download = 'canvas-image.jpeg'; // Set the default download filename
+
+    // Trigger the download by simulating a click on the link
+    link.click();
+
+    this.isLoading = false;
+  }
 }
