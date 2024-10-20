@@ -24,6 +24,7 @@ https://github.com/user-attachments/assets/c74eadcf-e556-4242-bf62-566283222b30
 - 🗑️ Clear All Layers: Clear all layers with a single click.
 - 💾 Local Storage: Save your edited image and data in local storage.
 - 💻📱 Cross-Platform Compatibility: Works seamlessly on both desktop and mobile devices.
+- 📥 Download Image: Download the edited image as a JPEG file.
 
 # AngularFabricJs
 
