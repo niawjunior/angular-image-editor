@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   title = 'angular-fabric-js';
   mobileDisplay = false;
   damage = null;
-  imageURL = 'http://192.168.1.120:4200/car.jpg';
+  imageURL = 'https://angular-image-editor.netlify.app/car.jpg';
   constructor(private deviceService: DeviceService) {
     const damage = localStorage.getItem('damage');
     this.damage = damage ? JSON.parse(damage) : null;
