@@ -26,6 +26,15 @@ https://github.com/user-attachments/assets/c74eadcf-e556-4242-bf62-566283222b30
 - 💻📱 Cross-Platform Compatibility: Works seamlessly on both desktop and mobile devices.
 - 📥 Download Image: Download the edited image as a JPEG file.
 
+## Upcoming Features
+
+🚀 Planned Future Enhancements:
+
+- 🖼️ Import Background: Allow users to upload and set a custom background for the canvas.
+- 🖱️ Import Objects (Drag and Drop): Enable dragging and dropping objects directly onto the canvas.
+- 🎨 More Icons & Ready-to-Select Objects: Provide a wider selection of pre-made icons and objects for users to add.
+- 🔤 Change Font: Allow users to customize fonts for the text they add to the canvas.
+
 # AngularFabricJs
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
