@@ -22,23 +22,23 @@
     >
       <div
         class="color white"
-        [ngClass]="{ active: selectedColor === colors.white }"
-        (click)="setSelectedColor(colors.white)"
+        [ngClass]="{ active: selectedColor === colors().white }"
+        (click)="setSelectedColor(colors().white)"
       ></div>
       <div
         class="color black"
-        [ngClass]="{ active: selectedColor === colors.black }"
-        (click)="setSelectedColor(colors.black)"
+        [ngClass]="{ active: selectedColor === colors().black }"
+        (click)="setSelectedColor(colors().black)"
       ></div>
       <div
         class="color blue"
-        [ngClass]="{ active: selectedColor === colors.blue }"
-        (click)="setSelectedColor(colors.blue)"
+        [ngClass]="{ active: selectedColor === colors().blue }"
+        (click)="setSelectedColor(colors().blue)"
       ></div>
       <div
         class="color yellow"
-        [ngClass]="{ active: selectedColor === colors.yellow }"
-        (click)="setSelectedColor(colors.yellow)"
+        [ngClass]="{ active: selectedColor === colors().yellow }"
+        (click)="setSelectedColor(colors().yellow)"
       ></div>
       <button
         class="flex justify-center move-layer"
@@ -175,7 +175,7 @@
       @if (selectedTool === "draw") {
       <div class="sub-tools justify-between draw-1">
         <ng-container>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-1')">
+          <button (click)="setSelectedSubTool(subToolType().draw, 'draw-1')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 43 42"
@@ -187,7 +187,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-2')">
+          <button (click)="setSelectedSubTool(subToolType().draw, 'draw-2')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -199,7 +199,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-3')">
+          <button (click)="setSelectedSubTool(subToolType().draw, 'draw-3')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 43 42"
@@ -213,7 +213,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-4')">
+          <button (click)="setSelectedSubTool(subToolType().draw, 'draw-4')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -228,7 +228,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-5')">
+          <button (click)="setSelectedSubTool(subToolType().draw, 'draw-5')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -265,15 +265,15 @@
             </svg>
           </button>
           <div class="tags-container">
-            @for (tag of tags; track tag; let i = $index) {
+            @for (tag of tags(); track tag; let i = $index) {
             <button
               [ngStyle]="{
-                color: [colors.black, colors.blue].includes(selectedColor)
-                  ? colors.white
-                  : colors.black
+                color: [colors().black, colors().blue].includes(selectedColor)
+                  ? colors().white
+                  : colors().black
               }"
               class="tags-button flex justify-center items-center relative"
-              (click)="setSelectedSubTool(subToolType.tag, 'tag-' + i)"
+              (click)="setSelectedSubTool(subToolType().tag, 'tag-' + i)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -317,24 +317,24 @@
         <div class="text-container">
           <button
             [ngStyle]="{
-              color: [colors.black, colors.blue].includes(selectedColor)
-                ? colors.white
-                : colors.black,
+              color: [colors().black, colors().blue].includes(selectedColor)
+                ? colors().white
+                : colors().black,
               'background-color': selectedColor
             }"
             class="text-button flex justify-center items-center relative"
-            (click)="setSelectedSubTool(subToolType.text, 'text-bg')"
+            (click)="setSelectedSubTool(subToolType().text, 'text-bg')"
           >
-            กขค..
+            ABC..
           </button>
           <button
             [ngStyle]="{
               color: selectedColor
             }"
             class="text-button flex justify-center items-center relative"
-            (click)="setSelectedSubTool(subToolType.text, 'text-no-bg')"
+            (click)="setSelectedSubTool(subToolType().text, 'text-no-bg')"
           >
-            กขค..
+            ABC..
           </button>
         </div>
       </div>
@@ -473,7 +473,7 @@
           />
         </svg>
 
-        <div class="action-text">บันทึก</div>
+        <div class="action-text">SAVE</div>
       </button>
     </div>
   </div>
@@ -545,7 +545,7 @@
       @if (selectedTool === "draw") {
       <div class="sub-tools-desktop justify-between draw-1">
         <ng-container>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-1')">
+          <button (click)="setSelectedSubTool(subToolType().draw!, 'draw-1')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 43 42"
@@ -557,7 +557,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-2')">
+          <button (click)="setSelectedSubTool(subToolType().draw!, 'draw-2')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -569,7 +569,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-3')">
+          <button (click)="setSelectedSubTool(subToolType().draw!, 'draw-3')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 43 42"
@@ -583,7 +583,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-4')">
+          <button (click)="setSelectedSubTool(subToolType().draw!, 'draw-4')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -598,7 +598,7 @@
               />
             </svg>
           </button>
-          <button (click)="setSelectedSubTool(subToolType.draw, 'draw-5')">
+          <button (click)="setSelectedSubTool(subToolType().draw!, 'draw-5')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 41 40"
@@ -636,15 +636,15 @@
             <div class="bottom-gradient"></div>
           </button>
           <div class="tags-container">
-            @for (tag of tags; track tag; let i = $index) {
+            @for (tag of tags(); track tag; let i = $index) {
             <button
               [ngStyle]="{
-                color: [colors.black, colors.blue].includes(selectedColor)
-                  ? colors.white
-                  : colors.black
+                color: [colors().black, colors().blue].includes(selectedColor)
+                  ? colors().white
+                  : colors().black
               }"
               class="tags-button flex justify-center items-center relative"
-              (click)="setSelectedSubTool(subToolType.tag, 'tag-' + i)"
+              (click)="setSelectedSubTool(subToolType().tag, 'tag-' + i)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -689,24 +689,24 @@
         <div class="text-container">
           <button
             [ngStyle]="{
-              color: [colors.black, colors.blue].includes(selectedColor)
-                ? colors.white
-                : colors.black,
+              color: [colors().black, colors().blue].includes(selectedColor)
+                ? colors().white
+                : colors().black,
               'background-color': selectedColor
             }"
             class="text-button flex justify-center items-center relative"
-            (click)="setSelectedSubTool(subToolType.text, 'text-bg')"
+            (click)="setSelectedSubTool(subToolType().text, 'text-bg')"
           >
-            กขค..
+            ABC..
           </button>
           <button
             [ngStyle]="{
               color: selectedColor
             }"
             class="text-button flex justify-center items-center relative"
-            (click)="setSelectedSubTool(subToolType.text, 'text-no-bg')"
+            (click)="setSelectedSubTool(subToolType().text, 'text-no-bg')"
           >
-            กขค..
+            ABC..
           </button>
         </div>
       </div>
@@ -725,23 +725,23 @@
         <div class="flex w-full justify-start gap-6 min-w-[390px]">
           <div
             class="color white"
-            [ngClass]="{ active: selectedColor === colors.white }"
-            (click)="setSelectedColor(colors.white)"
+            [ngClass]="{ active: selectedColor === colors().white }"
+            (click)="setSelectedColor(colors().white!)"
           ></div>
           <div
             class="color black"
-            [ngClass]="{ active: selectedColor === colors.black }"
-            (click)="setSelectedColor(colors.black)"
+            [ngClass]="{ active: selectedColor === colors().black }"
+            (click)="setSelectedColor(colors().black!)"
           ></div>
           <div
             class="color blue"
-            [ngClass]="{ active: selectedColor === colors.blue }"
-            (click)="setSelectedColor(colors.blue)"
+            [ngClass]="{ active: selectedColor === colors().blue }"
+            (click)="setSelectedColor(colors().blue!)"
           ></div>
           <div
             class="color yellow"
-            [ngClass]="{ active: selectedColor === colors.yellow }"
-            (click)="setSelectedColor(colors.yellow)"
+            [ngClass]="{ active: selectedColor === colors().yellow }"
+            (click)="setSelectedColor(colors().yellow!)"
           ></div>
           <button
             class="flex justify-center move-layer"
@@ -899,7 +899,7 @@
           [disabled]="isSaveLoading"
           (click)="saveCanvas()"
         >
-          บันทึก
+          SAVE
         </button>
       </div>
     </div>

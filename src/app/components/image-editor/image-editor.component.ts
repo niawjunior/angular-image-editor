@@ -10,17 +10,18 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   HostListener,
   OnDestroy,
   OnInit,
   Output,
-  computed,
+  EventEmitter,
+  WritableSignal,
+  signal,
   effect,
   input,
-  output,
-  signal,
   viewChild,
+  output,
+  computed,
 } from '@angular/core';
 import {
   Canvas,
@@ -93,7 +94,39 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading: boolean = false;
   isSaveLoading: boolean = false;
   zoomFactor: number = 3;
-  colors = {
+  /**
+   * Customizable colors for the editor
+   *
+   * These colors are used throughout the editor for various elements.
+   * You can provide your own color palette by passing an object with the required color keys.
+   *
+   * @example
+   * ```html
+   * <app-image-editor [colors]="yourCustomColors"></app-image-editor>
+   * ```
+   *
+   * Where yourCustomColors is an object with the following structure:
+   * ```typescript
+   * {
+   *   white: '#ffffff',
+   *   black: '#000000',
+   *   blue: '#002dd1',
+   *   yellow: '#fdd615',
+   *   cyan: '#01FFD7',
+   *   pink: '#FE04FF',
+   *   gray: '#D9D9D9'
+   * }
+   * ```
+   */
+  colors = input<{
+    white: string;
+    black: string;
+    blue: string;
+    yellow: string;
+    cyan: string;
+    pink: string;
+    gray: string;
+  }>({
     white: '#ffffff',
     black: '#000000',
     blue: '#002dd1',
@@ -101,23 +134,67 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     cyan: '#01FFD7',
     pink: '#FE04FF',
     gray: '#D9D9D9',
-  };
-  subToolType = {
+  });
+  /**
+   * Customizable tool types for the editor
+   *
+   * These tool types are used for different editing modes in the editor.
+   * You can provide your own tool types by passing an object with the required tool keys.
+   *
+   * @example
+   * ```html
+   * <app-image-editor [subToolType]="yourCustomToolTypes"></app-image-editor>
+   * ```
+   *
+   * Where yourCustomToolTypes is an object with the following structure:
+   * ```typescript
+   * {
+   *   draw: 'draw',
+   *   tag: 'tag',
+   *   text: 'text'
+   * }
+   * ```
+   */
+  subToolType = input<{
+    /**
+     * Tool type for drawing
+     */
+    draw: string;
+    /**
+     * Tool type for tagging
+     */
+    tag: string;
+    /**
+     * Tool type for text editing
+     */
+    text: string;
+  }>({
     draw: 'draw',
     tag: 'tag',
     text: 'text',
-  };
+  });
 
   screenResolution = {
     desktopDefault: 113,
     mobile: 303,
   } as const;
 
-  selectedColor: string = this.colors.white;
-  selectedTool: string = this.subToolType.draw;
+  selectedColor: string = this.colors()?.white;
+  selectedTool: string = this.subToolType()?.draw;
   isPortrait: boolean = true;
   isGroupEditing: boolean = false;
-  tags: string[] = [
+  /**
+   * Customizable tags for the editor
+   *
+   * These tags are used for labeling elements in the image editor.
+   * You can provide your own array of strings to customize the available tags.
+   *
+   * @example
+   * ```html
+   * <app-image-editor [tags]="yourCustomTags"></app-image-editor>
+   * ```
+   */
+  tags = input<string[]>([
     'ลักยิ้ม',
     'บุบ',
     'ครูด',
@@ -127,7 +204,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     'บิ่น',
     'ดุ้ง',
     'ขูดขีด',
-  ];
+  ]);
 
   hideControls = {
     tl: true,
@@ -149,15 +226,15 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   groupConfig: any = {
     centeredScaling: true,
     cornerSize: window.innerWidth < 900 ? 80 : 30,
-    cornerStrokeColor: this.colors.cyan,
-    cornerColor: this.colors.white,
+    cornerStrokeColor: this.colors()?.cyan,
+    cornerColor: this.colors()?.white,
     padding: 60,
     hasControls: true,
     borderDashArray: [5],
     borderScaleFactor: 3,
     hasBorders: true,
     cornerStyle: 'circle',
-    borderColor: this.colors.cyan,
+    borderColor: this.colors()?.cyan,
     transparentCorners: false,
     centeredRotation: true,
     lockScalingFlip: true,
@@ -744,7 +821,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     });
                     text.on('editing:exited', () => {
                       if (!text.text) {
-                        text.set('text', 'กขค..');
+                        text.set('text', 'ABC..');
                         react.set({
                           width: text.width! + 25,
                           height: text.height! + 14,
@@ -794,7 +871,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
                   item.on('editing:exited', () => {
                     if (!item.text) {
-                      item.set('text', 'กขค..');
+                      item.set('text', 'ABC..');
                     }
                     canvas.renderAll();
                   });
@@ -1087,17 +1164,17 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           // Set fill color for editable text
           obj.set(
             'fill',
-            [this.colors.black, this.colors.blue].includes(color)
-              ? this.colors.white
-              : this.colors.black
+            [this.colors()?.black, this.colors()?.blue].includes(color)
+              ? this.colors()?.white
+              : this.colors()?.black
           );
         } else if (!isEditable && obj.type.toLowerCase() === 'text') {
           // Set fill color for non-editable text
           obj.set(
             'fill',
-            [this.colors.black, this.colors.blue].includes(color)
-              ? this.colors.white
-              : this.colors.black
+            [this.colors()?.black, this.colors()?.blue].includes(color)
+              ? this.colors()?.white
+              : this.colors()?.black
           );
         } else if (
           obj.type.toLowerCase() === 'rect' ||
@@ -1141,9 +1218,9 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           if (currentRect && currentText) {
             currentText.set(
               'fill',
-              [this.colors.black, this.colors.blue].includes(color)
-                ? this.colors.white
-                : this.colors.black
+              [this.colors()?.black, this.colors()?.blue].includes(color)
+                ? this.colors()?.white
+                : this.colors()?.black
             );
 
             currentRect.set('fill', color);
@@ -1230,7 +1307,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const deleteIcon = this.convertSvgToDataURL(
       `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
   <circle cx="12.0156" cy="12" r="12" fill="#D9D9D9"/>
-  <path d="M13.5351 5.3335C14.109 5.3335 14.6186 5.70074 14.8 6.24519L15.1628 7.3335H17.349C17.7172 7.3335 18.0156 7.63198 18.0156 8.00016C18.0156 8.36834 17.7172 8.66682 17.349 8.66683L17.3473 8.71433L16.769 16.8093C16.6943 17.856 15.8234 18.6668 14.7742 18.6668H9.25712C8.20784 18.6668 7.33696 17.856 7.2622 16.8093L6.68399 8.71433C6.68285 8.6984 6.68228 8.68256 6.68226 8.66683C6.31408 8.66682 6.01562 8.36834 6.01562 8.00016C6.01562 7.63198 6.31411 7.3335 6.68229 7.3335H8.86845L9.23122 6.24519C9.41271 5.70074 9.92223 5.3335 10.4961 5.3335H13.5351ZM16.014 8.66683H8.01733L8.59214 16.7143C8.61706 17.0632 8.90736 17.3335 9.25712 17.3335H14.7742C15.1239 17.3335 15.4142 17.0632 15.4391 16.7143L16.014 8.66683ZM10.6823 10.6668C11.0242 10.6668 11.306 10.9242 11.3445 11.2557L11.349 11.3335V14.6668C11.349 15.035 11.0505 15.3335 10.6823 15.3335C10.3404 15.3335 10.0586 15.0761 10.0201 14.7446L10.0156 14.6668V11.3335C10.0156 10.9653 10.3141 10.6668 10.6823 10.6668ZM13.349 10.6668C13.7172 10.6668 14.0156 10.9653 14.0156 11.3335V14.6668C14.0156 15.035 13.7172 15.3335 13.349 15.3335C12.9808 15.3335 12.6823 15.035 12.6823 14.6668V11.3335C12.6823 10.9653 12.9808 10.6668 13.349 10.6668ZM13.5351 6.66683H10.4961L10.2739 7.3335H13.7574L13.5351 6.66683Z" fill="#F11E1E"/>
+  <path d="M13.5351 5.3335C14.109 5.3335 14.6186 5.70074 14.8 6.24519L15.1628 7.3335H17.349C17.7172 7.3335 18.0156 7.63198 18.0156 8.00016C18.0156 8.36834 17.7172 8.66682 17.349 8.66683L17.3473 8.71433L16.769 16.8093C16.6943 17.856 15.8234 18.6668 14.7742 18.6668H9.25712C8.20784 18.6668 7.33696 17.856 7.2622 16.8093L6.68399 8.71433C6.68285 8.6984 6.68228 8.68256 6.68226 8.66683C6.31408 8.66682 6.01562 8.36834 6.01562 8.00016C6.01562 7.63198 6.31411 7.3335 6.68229 7.3335H8.86845L8.59214 6.24519C9.41271 5.70074 9.92223 5.3335 10.4961 5.3335H13.5351ZM16.014 8.66683H8.01733L8.59214 16.7143C8.61706 17.0632 8.90736 17.3335 9.25712 17.3335H14.7742C15.1239 17.3335 15.4142 17.0632 15.4391 16.7143L16.014 8.66683ZM10.6823 10.6668C11.0242 10.6668 11.306 10.9242 11.3445 11.2557L11.349 11.3335V14.6668C11.349 15.035 11.0505 15.3335 10.6823 15.3335C10.3404 15.3335 10.0586 15.0761 10.0201 14.7446L10.0156 14.6668V11.3335C10.0156 10.9653 10.3141 10.6668 10.6823 10.6668ZM13.349 10.6668C13.7172 10.6668 14.0156 10.9653 14.0156 11.3335V14.6668C14.0156 15.035 13.7172 15.3335 13.349 15.3335C12.9808 15.3335 12.6823 15.035 12.6823 14.6668V11.3335C12.6823 10.9653 12.9808 10.6668 13.349 10.6668ZM13.5351 6.66683H10.4961L10.2739 7.3335H13.7574L13.5351 6.66683Z" fill="#F11E1E"/>
 </svg>`
     );
     const icon = document.createElement('img');
@@ -1253,7 +1330,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         ctx.arc(left, top, size / 2 + 12, 0, 2 * Math.PI, false);
         ctx.shadowColor = '#00000055';
         ctx.shadowBlur = 4;
-        ctx.fillStyle = this.colors.gray;
+        ctx.fillStyle = this.colors()?.gray;
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.restore();
@@ -1278,9 +1355,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const rotateIcon = this
       .convertSvgToDataURL(`<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
 <circle cx="12.0156" cy="12.6992" r="12" fill="#D9D9D9"/>
-<path d="M4.10159 12.7629C4.09664 12.0795 4.82222 11.6884 5.38227 11.9905L5.45753 12.036L7.5775 13.4644C8.34755 13.9833 7.87651 15.1611 6.9967 15.0531L6.90427 15.0372L6.06244 14.8525C6.7438 16.7339 8.30312 18.2618 10.3807 18.8185C13.4136 19.6311 16.5239 18.0982 17.7823 15.3313C17.9634 14.9334 18.4328 14.7575 18.8307 14.9384C19.2288 15.1195 19.4046 15.5889 19.2236 15.9868C17.65 19.4467 13.7637 21.3642 9.97088 20.3479C6.80118 19.4985 4.60034 16.842 4.17616 13.7868C4.12937 13.4498 4.10416 13.1079 4.10159 12.7629ZM4.8163 9.41498C6.38994 5.95514 10.2762 4.0377 14.069 5.05398C17.2388 5.90331 19.4396 8.55983 19.8638 11.615C19.9106 11.952 19.9357 12.294 19.9383 12.6389C19.9433 13.3223 19.2177 13.7135 18.6576 13.4113L18.5824 13.3658L16.4623 11.9374C15.6923 11.4185 16.1633 10.2408 17.043 10.3487L17.1355 10.3645L17.9774 10.5492C17.296 8.6679 15.7367 7.14003 13.6592 6.58337C10.6264 5.7707 7.51602 7.30365 6.25756 10.0705C6.07655 10.4685 5.60716 10.6444 5.20917 10.4634C4.81118 10.2824 4.63529 9.81298 4.8163 9.41498Z" fill="black"/>
-</svg>`);
-
+<path d="M4.10159 12.7629C4.09664 12.0795 4.82222 11.6884 5.38227 11.9905L5.45753 12.036L7.5775 13.4644C8.34755 13.9833 7.87651 15.1611 6.9967 15.0531L6.90427 15.0372L6.06244 14.8525C6.7438 16.7339 8.30312 18.2618 10.3807 18.8185C13.4136 19.6311 16.5239 18.0982 17.7823 15.3313C17.9634 14.9334 18.4328 14.7575 18.8307 14.9384C19.2288 15.1195 19.4046 15.5889 19.2236 15.9868C17.65 19.4467 13.7637 21.3642 9.97088 20.3479C6.80118 19.4985 4.60034 16.842 4.17616 13.7868C4.12937 13.4498 4.10416 13.1079 4.10159 12.7629ZM4.8163 9.41498C6.38994 5.95514 10.2762 4.0377 14.069 5.05398C17.2388 5.90331 19.4396 8.55983 19.8638 11.615C19.9106 11.952 19.9357 12.294 19.9383 12.6389C19.9433 13.3223 19.2177 13.7135 18.6576 13.4113L18.5824 13.3658L16.4623 11.9374C15.6923 11.4185 16.1633 10.2408 17.043 10.3487L17.1355 10.3645L17.9774 10.5492C17.296 8.6679 15.7367 7.14003 13.6592 6.58337C10.6264 5.7707 7.51602 7.30365 6.25756 10.0705C6.07655 10.4685 5.60716 10.6444 5.20917 10.4634C4.81118 10.2824 4.63529 9.81298 4.8163 9.41498ZM10.6823 10.6668C11.0242 10.6668 11.306 10.9242 11.3445 11.2557L11.349 11.3335V14.6668C11.349 15.035 11.0505 15.3335 10.6823 15.3335C10.3404 15.3335 10.0586 15.0761 10.0201 14.7446L10.0156 14.6668V11.3335C10.0156 10.9653 10.3141 10.6668 10.6823 10.6668ZM13.349 10.6668C13.7172 10.6668 14.0156 10.9653 14.0156 11.3335V14.6668C14.0156 15.035 13.7172 15.3335 13.349 15.3335C12.9808 15.3335 12.6823 15.035 12.6823 14.6668V11.3335C12.6823 10.9653 12.9808 10.6668 13.349 10.6668ZM13.5351 6.66683H10.4961L10.2739 7.3335H13.7574L13.5351 6.66683Z" fill="${this.selectedColor}"/></svg>`);
     const icon = document.createElement('img');
     icon.src = rotateIcon;
 
@@ -1301,7 +1376,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         ctx.arc(left, top, size / 2 + 12, 0, 2 * Math.PI, false);
         ctx.shadowColor = '#00000055';
         ctx.shadowBlur = 4;
-        ctx.fillStyle = this.colors.gray;
+        ctx.fillStyle = this.colors()?.gray;
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.restore();
@@ -1374,7 +1449,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param tool The specific tool selected within the type.
    */
   setSelectedSubTool(type: string, tool: string) {
-    if (type === this.subToolType.draw) {
+    if (type === this.subToolType()?.draw) {
       const draw1 = `<svg xmlns="http://www.w3.org/2000/svg" width="43" height="42" viewBox="0 0 43 42" fill="none"><path d="M41.2932 5.12231C42.4648 3.95074 42.4648 2.05125 41.2932 0.879666C40.1216 -0.291916 38.2222 -0.291927 37.0506 0.879638L41.2932 5.12231ZM0.171875 39.0005C0.171863 40.6573 1.515 42.0005 3.17185 42.0005L30.1719 42.0007C31.8287 42.0007 33.1719 40.6575 33.1719 39.0007C33.1719 37.3438 31.8287 36.0007 30.1719 36.0007L6.17189 36.0005L6.17206 12.0005C6.17207 10.3437 4.82893 9.0005 3.17208 9.00049C1.51522 9.00047 0.172068 10.3436 0.172057 12.0005L0.171875 39.0005ZM37.0506 0.879638L1.05057 36.8792L5.29318 41.1218L41.2932 5.12231L37.0506 0.879638Z" fill="${this.selectedColor}"/></svg>`;
       const draw2 = `<svg xmlns="http://www.w3.org/2000/svg" width="41" height="40" viewBox="0 0 41 40" fill="none"><path d="M39.5861 3.41447C40.3671 2.63342 40.3671 1.36709 39.5861 0.586041C38.8051 -0.195015 37.5387 -0.195023 36.7577 0.586021L39.5861 3.41447ZM0.171391 38.0002C0.171383 39.1048 1.06681 40.0002 2.17138 40.0002L20.1714 40.0004C21.2759 40.0004 22.1714 39.1049 22.1714 38.0004C22.1714 36.8958 21.276 36.0004 20.1714 36.0004L4.17141 36.0003L4.17151 20.0003C4.17152 18.8957 3.2761 18.0002 2.17153 18.0002C1.06696 18.0002 0.171522 18.8957 0.171514 20.0002L0.171391 38.0002ZM36.7577 0.586021L0.757187 36.586L3.58559 39.4145L39.5861 3.41447L36.7577 0.586021Z" fill="${this.selectedColor}"/></svg>`;
       const draw3 = `<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1411,7 +1486,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Handling for tag tools
 
-    if (type === this.subToolType.tag) {
+    if (type === this.subToolType()?.tag) {
       // Extracting tag number from tool name
 
       const tag = Number(tool.replace('tag-', ''));
@@ -1419,16 +1494,31 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       const canvas = this.canvasFabric;
       // SVG definition for tag icon
 
+      // Create a temporary text element to measure the text width
+      const tempText = new FabricText(this.tags()?.[tag] || '', {
+        fontSize: 16,
+      });
+
+      // Calculate the required width based on text length (minimum 62px)
+      const textWidth = tempText.width || 0;
+      const svgWidth = Math.max(62, textWidth + 40); // Add padding
+
+      // Create SVG with dynamic width
       const tagSvg = `<svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="62"
+                width="${svgWidth}"
                 height="33"
-                viewBox="0 0 62 33"
+                viewBox="0 0 ${svgWidth} 33"
                 fill="none"
               >
                 <path
-
-                  d="M11.5717 1.31677C11.9501 0.821685 12.5376 0.53125 13.1607 0.53125H59.9266C61.0312 0.53125 61.9266 1.42668 61.9266 2.53125V30.5312C61.9266 31.6358 61.0312 32.5312 59.9266 32.5312H13.1607C12.5376 32.5312 11.9501 32.2408 11.5717 31.7457L0.871652 17.7457C0.323701 17.0288 0.323701 16.0337 0.871653 15.3168L11.5717 1.31677Z"
+                  d="M11.5717 1.31677C11.9501 0.821685 12.5376 0.53125 13.1607 0.53125H${
+                    svgWidth - 3
+                  }C${svgWidth - 1} 0.53125 ${svgWidth - 0.1} 1.42668 ${
+        svgWidth - 0.1
+      } 2.53125V30.5312C${svgWidth - 0.1} 31.6358 ${svgWidth - 1} 32.5312 ${
+        svgWidth - 3
+      } 32.5312H13.1607C12.5376 32.5312 11.9501 32.2408 11.5717 31.7457L0.871652 17.7457C0.323701 17.0288 0.323701 16.0337 0.871653 15.3168L11.5717 1.31677Z"
                   fill="${this.selectedColor}"
                 />
               </svg>`;
@@ -1447,14 +1537,14 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           svgObject.set('id', objectId);
           // Creating text object for the tag
 
-          const text = new FabricText(this.tags[tag], {
+          const text = new FabricText(this.tags()?.[tag] || '', {
             fontSize: 16,
 
-            fill: [this.colors.black, this.colors.blue].includes(
+            fill: [this.colors()?.black, this.colors()?.blue].includes(
               this.selectedColor
             )
-              ? this.colors.white
-              : this.colors.black,
+              ? this.colors()?.white
+              : this.colors()?.black,
           });
           // Positioning text relative to SVG
 
@@ -1462,15 +1552,11 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             left:
               svgObject.left! +
               svgObject.getScaledWidth() / 2 -
-              svgObject.getScaledWidth() / 2 -
-              text.getScaledWidth() / 2 +
-              32,
+              text.getScaledWidth() / 2,
             top:
               svgObject.top! +
               svgObject.getScaledHeight() / 2 -
-              svgObject.getScaledHeight() / 2 +
-              text.getScaledHeight() / 2 -
-              2,
+              text.getScaledHeight() / 2,
           });
           // Creating group with SVG and text
 
@@ -1494,7 +1580,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Handling for text tools
 
-    if (type === this.subToolType.text) {
+    if (type === this.subToolType()?.text) {
       const canvas = this.canvasFabric;
       // SVG definition for text icon
 
@@ -1524,17 +1610,17 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           // Create IText object for text editing
           const objectId = uuidv4();
 
-          const text = new IText('กขค..', {
+          const text = new IText('ABC..', {
             id: objectId,
             fontSize: 16,
             textAlign: 'center',
             fill:
               tool === 'text-bg'
-                ? [this.colors.black, this.colors.blue].includes(
+                ? [this.colors()?.black, this.colors()?.blue].includes(
                     this.selectedColor
                   )
-                  ? this.colors.white
-                  : this.colors.black
+                  ? this.colors()?.white
+                  : this.colors()?.black
                 : this.selectedColor,
           });
           // Handling for text without background
@@ -1561,7 +1647,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
             text.on('editing:exited', () => {
               if (!text.text) {
-                text.set('text', 'กขค..');
+                text.set('text', 'ABC..');
               }
             });
           }
@@ -1616,7 +1702,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
             text.on('editing:exited', () => {
               if (!text.text) {
-                text.set('text', 'กขค..');
+                text.set('text', 'ABC..');
                 svgObject.set({
                   width: text.width! + 25,
                   height: text.height! + 14,
