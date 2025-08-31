@@ -482,7 +482,6 @@
 <div
   class="editor-container-desktop relative min-h-[100vh] max-h-[100vh] h-[100vh]"
 >
-  @if (isEditing()) {
   <div class="tools-container-desktop">
     <div class="tools-desktop">
       <button
@@ -714,7 +713,6 @@
       }
     </div>
   </div>
-  }
   <div
     class="image-editor-desktop w-full"
     [ngClass]="{ hidden: isLoading || !isInitialized }"
@@ -722,13 +720,7 @@
     <div class="canvas-container flex items-center">
       <canvas #fabricCanvas id="canvas"></canvas>
     </div>
-    @if (isEditing()) {
-    <div
-      class="actions-desktop"
-      [ngClass]="{
-        'w-[calc(100dvw-113px)]': isEditing(),
-      }"
-    >
+    <div class="actions-desktop w-[calc(100dvw-113px)]">
       <div class="actions-colors-buttons">
         <div class="flex w-full justify-start gap-6 min-w-[390px]">
           <div
@@ -911,7 +903,6 @@
         </button>
       </div>
     </div>
-    }
   </div>
 </div>
 }

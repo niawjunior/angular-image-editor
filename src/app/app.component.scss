@@ -1,0 +1,61 @@
+:host {
+  font-family: "Noto Sans Thai", sans-serif !important;
+  touch-action: manipulation;
+}
+
+.image-upload-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.upload-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-button {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  border: 1px solid #0084be;
+  background-color: #0084be;
+  border-radius: 8px;
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  .upload-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: #006a99;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background-color: #969ea9;
+    color: #ffffff;
+    cursor: not-allowed;
+    border-color: #969ea9;
+  }
+}

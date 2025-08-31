@@ -57,17 +57,15 @@ declare module 'fabric' {
 }
 
 @Component({
-    selector: 'app-image-editor',
-    templateUrl: './image-editor.component.html',
-    styleUrls: ['./image-editor.component.scss'],
-    imports: [CommonModule]
+  selector: 'app-image-editor',
+  templateUrl: './image-editor.component.html',
+  styleUrls: ['./image-editor.component.scss'],
+  imports: [CommonModule],
 })
 export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   isDesktop = input<boolean>(false);
   damage = input<any>(null);
-  isEditing = input<boolean>(false);
   imageURL = input<string>('');
-
   // zoom
   zoomOutput = output<number>();
   zoomValue = signal(1);
@@ -250,9 +248,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       event.preventDefault();
       // If in editing mode, trigger the saveCanvas method
 
-      if (this.isEditing()) {
-        this.saveCanvas();
-      }
+      this.saveCanvas();
     }
     // Check if the Delete or Backspace key is pressed
 
@@ -272,11 +268,19 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private loadingService: LoadingService) {
     effect(() => {
       // If 'isEditing' has changed and it's on desktop, resize canvas
-      console.log;
-      if (this.isEditing() && this.isDesktop()) {
+      if (this.isDesktop()) {
         this.resizeCanvas();
       }
-      // window.location.reload();
+    });
+
+    // Add effect to watch for changes to the imageURL input
+    effect(() => {
+      const url = this.imageURL();
+      if (url && this.isInitialized) {
+        // Only reload if we've already initialized once
+        this.loadingService.show();
+        this.loadImageToCanvas(this.damage());
+      }
     });
   }
 
@@ -695,8 +699,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             obj.set({
               ...this.groupConfig,
               lockScalingFlip: obj.type.toLowerCase() === 'path' ? false : true,
-              selectable: this.isEditing() || !this.isDesktop() ? true : false,
-              evented: this.isEditing() || !this.isDesktop() ? true : false,
+              selectable: this.isDesktop() ? true : false,
+              evented: this.isDesktop() ? true : false,
             });
 
             const objJson = obj.toJSON();
