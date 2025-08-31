@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "allowedCommonJsDependencies": ["hammerjs", "ua-parser-js"],
             "outputPath": "dist/angular-fabric-js",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -37,12 +38,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
+                  "maximumWarning": "900kB",
                   "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
+                  "maximumWarning": "900kB",
                   "maximumError": "2MB"
                 }
               ],
