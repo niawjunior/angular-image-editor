@@ -57,11 +57,10 @@ declare module 'fabric' {
 }
 
 @Component({
-  selector: 'app-image-editor',
-  templateUrl: './image-editor.component.html',
-  styleUrls: ['./image-editor.component.scss'],
-  standalone: true,
-  imports: [CommonModule],
+    selector: 'app-image-editor',
+    templateUrl: './image-editor.component.html',
+    styleUrls: ['./image-editor.component.scss'],
+    imports: [CommonModule]
 })
 export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   isDesktop = input<boolean>(false);

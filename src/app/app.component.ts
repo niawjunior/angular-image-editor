@@ -3,11 +3,10 @@ import { ImageEditorComponent } from './components/image-editor/image-editor.com
 import { DeviceService } from './services/device.service';
 import { LoadingComponent } from './components/loading/loading.component';
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ImageEditorComponent, LoadingComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [ImageEditorComponent, LoadingComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'angular-fabric-js';
