@@ -1,7 +1,7 @@
 /**
  * @author: Niaw
  * @description: image editor
- * @version: Fabric.js v.6.4.0
+ * @version: Fabric.js v.6.7.1
  **
  */
 
@@ -15,7 +15,6 @@ import {
   OnInit,
   Output,
   EventEmitter,
-  WritableSignal,
   signal,
   effect,
   input,
