@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { describe, beforeEach, it, expect } from "vitest";
 
 import { LoadingComponent } from "./loading.component";
 
@@ -8,7 +9,7 @@ describe("LoadingComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LoadingComponent]
+      imports: [LoadingComponent],
     });
     fixture = TestBed.createComponent(LoadingComponent);
     component = fixture.componentInstance;

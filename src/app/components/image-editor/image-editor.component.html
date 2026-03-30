@@ -22,29 +22,29 @@
     >
       <div
         class="color white"
-        [ngClass]="{ active: selectedColor === colors().white }"
+        [class.active]="selectedColor === colors().white"
         (click)="setSelectedColor(colors().white)"
       ></div>
       <div
         class="color black"
-        [ngClass]="{ active: selectedColor === colors().black }"
+        [class.active]="selectedColor === colors().black"
         (click)="setSelectedColor(colors().black)"
       ></div>
       <div
         class="color blue"
-        [ngClass]="{ active: selectedColor === colors().blue }"
+        [class.active]="selectedColor === colors().blue"
         (click)="setSelectedColor(colors().blue)"
       ></div>
       <div
         class="color yellow"
-        [ngClass]="{ active: selectedColor === colors().yellow }"
+        [class.active]="selectedColor === colors().yellow"
         (click)="setSelectedColor(colors().yellow)"
       ></div>
       <button
         class="flex justify-center move-layer"
         (click)="bringToFront()"
         [disabled]="getIsFront"
-        [ngClass]="{ active: !getIsFront }"
+        [class.active]="!getIsFront"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@
         class="flex justify-center move-layer"
         (click)="sendToBack()"
         [disabled]="getIsBack"
-        [ngClass]="{ active: !getIsBack }"
+        [class.active]="!getIsBack"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +98,7 @@
         (click)="onZoomChange(zoomOperator.zoomOut)"
         class="flex justify-center zoom"
         [disabled]="getZoomValue() <= 1"
-        [ngClass]="{ active: getZoomValue() > 1 }"
+        [class.active]="getZoomValue() > 1"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
           <path
@@ -111,7 +111,7 @@
         (click)="onZoomChange(zoomOperator.zoomIn)"
         class="flex justify-center zoom"
         [disabled]="getZoomValue() >= 2"
-        [ngClass]="{ active: getZoomValue() < 2 }"
+        [class.active]="getZoomValue() < 2"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
           <path
@@ -124,7 +124,7 @@
         (click)="resetZoom()"
         class="flex justify-center zoom"
         [disabled]="getZoomValue() === 1 && areTransformsEqual"
-        [ngClass]="{ active: getZoomValue() !== 1 || !areTransformsEqual }"
+        [class.active]="getZoomValue() !== 1 || !areTransformsEqual"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 29" fill="none">
           <path
@@ -140,7 +140,7 @@
         class="flex justify-center clear-icon"
         (click)="handleDownload()"
         [disabled]="isLoading"
-        [ngClass]="{ active: !isLoading }"
+        [class.active]="!isLoading"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +160,7 @@
   <div class="flex image-container">
     <div
       class="image-editor w-full"
-      [ngClass]="{ hidden: isLoading || !isInitialized }"
+      [class.hidden]="isLoading || !isInitialized"
     >
       <div class="canvas-container flex items-center">
         <canvas #fabricCanvas id="canvas"></canvas>
@@ -267,11 +267,7 @@
           <div class="tags-container">
             @for (tag of tags(); track tag; let i = $index) {
             <button
-              [ngStyle]="{
-                color: [colors().black, colors().blue].includes(selectedColor)
-                  ? colors().white
-                  : colors().black
-              }"
+              [style.color]="[colors().black, colors().blue].includes(selectedColor) ? colors().white : colors().black"
               class="tags-button flex justify-center items-center relative"
               (click)="setSelectedSubTool(subToolType().tag, 'tag-' + i)"
             >
@@ -316,21 +312,15 @@
       <div class="sub-tools">
         <div class="text-container">
           <button
-            [ngStyle]="{
-              color: [colors().black, colors().blue].includes(selectedColor)
-                ? colors().white
-                : colors().black,
-              'background-color': selectedColor
-            }"
+            [style.color]="[colors().black, colors().blue].includes(selectedColor) ? colors().white : colors().black"
+            [style.background-color]="selectedColor"
             class="text-button flex justify-center items-center relative"
             (click)="setSelectedSubTool(subToolType().text, 'text-bg')"
           >
             ABC..
           </button>
           <button
-            [ngStyle]="{
-              color: selectedColor
-            }"
+            [style.color]="selectedColor"
             class="text-button flex justify-center items-center relative"
             (click)="setSelectedSubTool(subToolType().text, 'text-no-bg')"
           >
@@ -343,7 +333,7 @@
     <div class="tools">
       <button
         class="tool-button"
-        [ngStyle]="{ 'background-color': '#000000' }"
+        style="background-color: #000000"
         (click)="handleClear()"
         [disabled]="isDisabledClear || isLoading"
       >
@@ -364,7 +354,7 @@
       </button>
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'draw' }"
+        [class.active]="selectedTool === 'draw'"
         (click)="setSelectedTool('draw')"
       >
         @if (selectedTool === "draw") {
@@ -397,7 +387,7 @@
       </button>
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'tag' }"
+        [class.active]="selectedTool === 'tag'"
         (click)="setSelectedTool('tag')"
       >
         @if (selectedTool === "tag") {
@@ -432,7 +422,7 @@
       </button>
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'text' }"
+        [class.active]="selectedTool === 'text'"
         (click)="setSelectedTool('text')"
       >
         @if (selectedTool === "text") {
@@ -486,7 +476,7 @@
     <div class="tools-desktop">
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'draw' }"
+        [class.active]="selectedTool === 'draw'"
         (click)="setSelectedTool('draw')"
       >
         <svg
@@ -504,7 +494,7 @@
       </button>
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'tag' }"
+        [class.active]="selectedTool === 'tag'"
         (click)="setSelectedTool('tag')"
       >
         <svg
@@ -524,7 +514,7 @@
       </button>
       <button
         class="tool-button"
-        [ngClass]="{ active: selectedTool === 'text' }"
+        [class.active]="selectedTool === 'text'"
         (click)="setSelectedTool('text')"
       >
         <svg
@@ -638,11 +628,7 @@
           <div class="tags-container">
             @for (tag of tags(); track tag; let i = $index) {
             <button
-              [ngStyle]="{
-                color: [colors().black, colors().blue].includes(selectedColor)
-                  ? colors().white
-                  : colors().black
-              }"
+              [style.color]="[colors().black, colors().blue].includes(selectedColor) ? colors().white : colors().black"
               class="tags-button flex justify-center items-center relative"
               (click)="setSelectedSubTool(subToolType().tag, 'tag-' + i)"
             >
@@ -688,21 +674,15 @@
       <div class="sub-tools-desktop">
         <div class="text-container">
           <button
-            [ngStyle]="{
-              color: [colors().black, colors().blue].includes(selectedColor)
-                ? colors().white
-                : colors().black,
-              'background-color': selectedColor
-            }"
+            [style.color]="[colors().black, colors().blue].includes(selectedColor) ? colors().white : colors().black"
+            [style.background-color]="selectedColor"
             class="text-button flex justify-center items-center relative"
             (click)="setSelectedSubTool(subToolType().text, 'text-bg')"
           >
             ABC..
           </button>
           <button
-            [ngStyle]="{
-              color: selectedColor
-            }"
+            [style.color]="selectedColor"
             class="text-button flex justify-center items-center relative"
             (click)="setSelectedSubTool(subToolType().text, 'text-no-bg')"
           >
@@ -715,7 +695,7 @@
   </div>
   <div
     class="image-editor-desktop w-full"
-    [ngClass]="{ hidden: isLoading || !isInitialized }"
+    [class.hidden]="isLoading || !isInitialized"
   >
     <div class="canvas-container flex items-center">
       <canvas #fabricCanvas id="canvas"></canvas>
@@ -725,29 +705,29 @@
         <div class="flex w-full justify-start gap-6 min-w-[390px]">
           <div
             class="color white"
-            [ngClass]="{ active: selectedColor === colors().white }"
+            [class.active]="selectedColor === colors().white"
             (click)="setSelectedColor(colors().white!)"
           ></div>
           <div
             class="color black"
-            [ngClass]="{ active: selectedColor === colors().black }"
+            [class.active]="selectedColor === colors().black"
             (click)="setSelectedColor(colors().black!)"
           ></div>
           <div
             class="color blue"
-            [ngClass]="{ active: selectedColor === colors().blue }"
+            [class.active]="selectedColor === colors().blue"
             (click)="setSelectedColor(colors().blue!)"
           ></div>
           <div
             class="color yellow"
-            [ngClass]="{ active: selectedColor === colors().yellow }"
+            [class.active]="selectedColor === colors().yellow"
             (click)="setSelectedColor(colors().yellow!)"
           ></div>
           <button
             class="flex justify-center move-layer"
             (click)="bringToFront()"
             [disabled]="getIsFront"
-            [ngClass]="{ active: !getIsFront }"
+            [class.active]="!getIsFront"
           >
             <svg
               width="29"
@@ -774,7 +754,7 @@
             class="flex justify-center move-layer"
             (click)="sendToBack()"
             [disabled]="getIsBack"
-            [ngClass]="{ active: !getIsBack }"
+            [class.active]="!getIsBack"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -802,7 +782,7 @@
             (click)="zoomOut()"
             class="flex justify-center zoom"
             [disabled]="percentageValue === 100"
-            [ngClass]="{ active: getZoomValue() > 1 }"
+            [class.active]="getZoomValue() > 1"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -819,7 +799,7 @@
             (click)="zoomIn()"
             class="flex justify-center zoom"
             [disabled]="percentageValue === 200"
-            [ngClass]="{ active: getZoomValue() < 2 }"
+            [class.active]="getZoomValue() < 2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -836,7 +816,7 @@
             (click)="resetZoom()"
             class="flex justify-center zoom"
             [disabled]="getZoomValue() === 1 && areTransformsEqual"
-            [ngClass]="{ active: getZoomValue() !== 1 || !areTransformsEqual }"
+            [class.active]="getZoomValue() !== 1 || !areTransformsEqual"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -855,7 +835,7 @@
             class="flex justify-center clear-icon"
             (click)="handleClear()"
             [disabled]="isDisabledClear || isLoading"
-            [ngClass]="{ active: !isDisabledClear }"
+            [class.active]="!isDisabledClear"
           >
             <svg
               width="29"
@@ -876,7 +856,7 @@
             class="flex justify-center clear-icon"
             (click)="handleDownload()"
             [disabled]="isLoading"
-            [ngClass]="{ active: !isLoading }"
+            [class.active]="!isLoading"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

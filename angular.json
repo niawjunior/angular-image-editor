@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": ["hammerjs", "ua-parser-js"],
+            "allowedCommonJsDependencies": ["ua-parser-js"],
             "outputPath": "dist/angular-fabric-js",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -73,19 +73,12 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": ["src/styles.scss"],
-            "scripts": []
+            "buildTarget": "angular-fabric-js:build",
+            "runner": "vitest",
+            "setupFiles": ["src/test-setup.ts"]
           }
         }
       }

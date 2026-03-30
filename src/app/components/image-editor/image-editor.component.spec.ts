@@ -1,25 +1,25 @@
-/* tslint:disable:no-unused-variable */
-import { ComponentFixture, TestBed } from "@angular/core/testing"
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { describe, beforeEach, it, expect } from "vitest";
 
-import { ImageEditorComponent } from "./image-editor.component"
+import { ImageEditorComponent } from "./image-editor.component";
 
 describe("ImageEditorComponent", () => {
-  let component: ImageEditorComponent
-  let fixture: ComponentFixture<ImageEditorComponent>
+  let component: ImageEditorComponent;
+  let fixture: ComponentFixture<ImageEditorComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ImageEditorComponent],
-    }).compileComponents()
-  })
+      imports: [ImageEditorComponent],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ImageEditorComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-  })
+    fixture = TestBed.createComponent(ImageEditorComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
   it("should create", () => {
-    expect(component).toBeTruthy()
-  })
-})
+    expect(component).toBeTruthy();
+  });
+});

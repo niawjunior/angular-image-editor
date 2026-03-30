@@ -1,11 +1,10 @@
 /**
  * @author: Niaw
  * @description: image editor
- * @version: Fabric.js v.6.7.1
+ * @version: Fabric.js v.7.2.0
  **
  */
 
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -38,11 +37,11 @@ import {
   TMat2D,
   TPointerEvent,
   InteractiveFabricObject,
+  Rect,
+  Path,
 } from 'fabric';
-import Hammer from 'hammerjs';
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingService } from '../../services/loading.service';
-
 declare module 'fabric' {
   // to have the properties recognized on the instance and in the constructor
   interface FabricObject {
@@ -60,7 +59,7 @@ declare module 'fabric' {
   selector: 'app-image-editor',
   templateUrl: './image-editor.component.html',
   styleUrls: ['./image-editor.component.scss'],
-  imports: [CommonModule],
+  imports: [],
 })
 export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   isDesktop = input<boolean>(false);
@@ -250,7 +249,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
    * Listens to the window resize event and adjusts canvas dimensions accordingly.
    * @param $event - The event object containing resize information.
    */
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   resizeCanvas() {
     // Check if both canvas and image fabric objects are available
 
@@ -534,7 +533,10 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   groupObjects(group: any) {
     this.deleteGroup(group);
-    const newGroup = new Group(group.objects);
+    const newGroup = new Group(group.objects, {
+      originX: 'left',
+      originY: 'top',
+    });
     this.canvasFabric.add(newGroup);
     this.canvasFabric.requestRenderAll();
   }
@@ -709,8 +711,9 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // prevent object out of canvas when resize
 
-    // reset active object
-    canvas.on('mouse:up', function () {
+    // reset active object (only for left-click; v7 fires for all buttons by default)
+    canvas.on('mouse:up', function (opt: any) {
+      if (opt.e && opt.e.button !== 0) return;
       if (canvas.getActiveObjects().length > 1) {
         canvas.discardActiveObject();
       }
@@ -733,33 +736,67 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       canvas.discardActiveObject();
     });
 
-    // workaround for touch gesture not working (on mobile) with hammerjs
-    const hammerCanvas = new Hammer(canvas.getSelectionElement());
-    hammerCanvas.get('pinch').set({ enable: true });
-    hammerCanvas.on('pinch', (event: any) => {
-      this.zoomCanvas(canvas, event.scale, {
-        x: event.center.x,
-        y: event.center.y,
-      });
+    // Native Pointer Events for touch gesture handling (pinch-to-zoom and pan)
+    const canvasEl = canvas.getSelectionElement();
+    const activePointers = new Map<number, PointerEvent>();
+    let lastPinchDistance = 0;
+    let lastPanX = 0;
+    let lastPanY = 0;
+
+    canvasEl.addEventListener('pointerdown', (e: PointerEvent) => {
+      activePointers.set(e.pointerId, e);
+      if (activePointers.size === 1) {
+        lastPanX = e.clientX;
+        lastPanY = e.clientY;
+      }
+      if (activePointers.size === 2) {
+        const pointers = Array.from(activePointers.values());
+        lastPinchDistance = Math.hypot(
+          pointers[0].clientX - pointers[1].clientX,
+          pointers[0].clientY - pointers[1].clientY
+        );
+      }
     });
 
-    // Set the options for the pan recognizer, including sensitivity
-    hammerCanvas.get('pan').set({
-      direction: Hammer.DIRECTION_ALL,
-      threshold: 0,
-      pointers: 0,
+    canvasEl.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, e);
+
+      if (activePointers.size === 2) {
+        // Pinch gesture
+        const pointers = Array.from(activePointers.values());
+        const currentDistance = Math.hypot(
+          pointers[0].clientX - pointers[1].clientX,
+          pointers[0].clientY - pointers[1].clientY
+        );
+        if (lastPinchDistance > 0) {
+          const scale = currentDistance / lastPinchDistance;
+          const centerX = (pointers[0].clientX + pointers[1].clientX) / 2;
+          const centerY = (pointers[0].clientY + pointers[1].clientY) / 2;
+          this.zoomCanvas(canvas, scale, { x: centerX, y: centerY });
+        }
+        lastPinchDistance = currentDistance;
+      } else if (activePointers.size === 1) {
+        // Pan gesture
+        const deltaX = e.clientX - lastPanX;
+        const deltaY = e.clientY - lastPanY;
+        this.panCanvas(canvas, { x: deltaX, y: deltaY });
+        lastPanX = e.clientX;
+        lastPanY = e.clientY;
+      }
     });
 
-    hammerCanvas.on('pan', (event: any) => {
-      event.preventDefault();
-
-      const e = event;
-
-      this.panCanvas(canvas, {
-        x: e.deltaX,
-        y: e.deltaY,
-      });
-    });
+    const pointerEnd = (e: PointerEvent) => {
+      activePointers.delete(e.pointerId);
+      lastPinchDistance = 0;
+      if (activePointers.size === 1) {
+        const remaining = Array.from(activePointers.values())[0];
+        lastPanX = remaining.clientX;
+        lastPanY = remaining.clientY;
+      }
+    };
+    canvasEl.addEventListener('pointerup', pointerEnd);
+    canvasEl.addEventListener('pointercancel', pointerEnd);
 
     canvas.renderAll();
     this.canvasFabric = canvas;
@@ -774,17 +811,15 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             // get stroke color from obj
             obj.set({
               ...this.groupConfig,
-              lockScalingFlip: obj.type.toLowerCase() === 'path' ? false : true,
+              lockScalingFlip: obj instanceof Path ? false : true,
               selectable: this.isDesktop() ? true : false,
               evented: this.isDesktop() ? true : false,
             });
 
-            const objJson = obj.toJSON();
-            const isEditable = objJson?.objects?.some(
-              (obj: { type: string }) =>
-                obj?.type === 'IText' || obj?.type.toLowerCase() === 'i-text'
+            const isEditable = obj instanceof Group && obj.getObjects().some(
+              (child) => child instanceof IText
             );
-            if (obj.type.toLowerCase() === 'group' && isEditable) {
+            if (obj instanceof Group && isEditable) {
               obj.on(
                 'mousedown',
                 this.fabricDblClick(obj, () => {
@@ -793,14 +828,11 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
                   let react: any;
                   let text: any;
                   canvas.getObjects().forEach((item: any) => {
-                    if (item.type.toLowerCase() === 'rect') {
+                    if (item instanceof Rect) {
                       react = item;
                     }
 
-                    if (
-                      item.type === 'IText' ||
-                      item.type.toLowerCase() === 'i-text'
-                    ) {
+                    if (item instanceof IText) {
                       text = item;
                     }
                   });
@@ -829,6 +861,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.deleteGroup([react, text]);
                       const group = new Group([react, text], {
                         ...this.groupConfig,
+                        originX: 'left',
+                        originY: 'top',
                       });
                       group.setControlsVisibility(this.hideControls);
 
@@ -857,7 +891,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
               );
             }
 
-            if (obj.type === 'IText' || obj.type.toLowerCase() === 'i-text') {
+            if (obj instanceof IText) {
               const item = obj as IText;
               obj.on(
                 'mousedown',
@@ -879,7 +913,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             const hideControl =
-              obj.type.toLowerCase() === 'rect'
+              obj instanceof Rect
                 ? {
                     ...this.hideControls,
                     ml: true,
@@ -916,6 +950,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             selectable: false,
             width: this.imageSize.width,
             height: this.imageSize.height,
+            originX: 'left',
+            originY: 'top',
           });
 
           // Directly assign the backgroundImage property
@@ -1146,20 +1182,17 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   setSelectedColor(color: string) {
     const activeObject: any = this.canvasFabric.getActiveObject();
     // Check if the active object is a group
-    if (activeObject && activeObject.type.toLowerCase() === 'group') {
+    if (activeObject && activeObject instanceof Group) {
       const objectsInGroup: any[] = activeObject.getObjects();
 
       // Check if any object in the group is editable text
       const isEditable = objectsInGroup?.some(
-        (obj) => obj?.type === 'IText' || obj?.type.toLowerCase() === 'i-text'
+        (obj) => obj instanceof IText
       );
 
       // Set color for objects in the group based on their type
       objectsInGroup.forEach((obj) => {
-        if (
-          (isEditable && obj.type === 'IText') ||
-          obj.type.toLowerCase() === 'i-text'
-        ) {
+        if (isEditable && obj instanceof IText) {
           // Set fill color for editable text
           obj.set(
             'fill',
@@ -1167,7 +1200,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
               ? this.colors()?.white
               : this.colors()?.black
           );
-        } else if (!isEditable && obj.type.toLowerCase() === 'text') {
+        } else if (!isEditable && obj instanceof FabricText) {
           // Set fill color for non-editable text
           obj.set(
             'fill',
@@ -1175,26 +1208,20 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
               ? this.colors()?.white
               : this.colors()?.black
           );
-        } else if (
-          obj.type.toLowerCase() === 'rect' ||
-          obj.type.toLowerCase() === 'path'
-        ) {
+        } else if (obj instanceof Rect || obj instanceof Path) {
           // Set fill color for rectangle or path
           obj.set('fill', color);
         }
       });
     } else if (activeObject) {
       // Set color for a single object (not a group)
-      if (activeObject.type.toLowerCase() === 'rect') {
+      if (activeObject instanceof Rect) {
         // Set stroke color for rectangle
         activeObject.set('stroke', color);
-      } else if (activeObject.type.toLowerCase() === 'path') {
+      } else if (activeObject instanceof Path) {
         // Set fill color for path
         activeObject.set('fill', color);
-      } else if (
-        activeObject.type === 'IText' ||
-        activeObject.type.toLowerCase() === 'i-text'
-      ) {
+      } else if (activeObject instanceof IText) {
         // Set fill color for editable text
         if (!this.isGroupEditing) {
           activeObject.set('fill', color);
@@ -1203,15 +1230,14 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             .getObjects()
             .find(
               (obj: any) =>
-                obj.id === activeObject.id && obj.type.toLowerCase() === 'rect'
+                obj.id === activeObject.id && obj instanceof Rect
             );
 
           const currentText = this.canvasFabric
             .getObjects()
             .find(
               (obj: any) =>
-                obj.id === activeObject.id &&
-                (obj.type === 'IText' || obj.type.toLowerCase() === 'i-text')
+                obj.id === activeObject.id && obj instanceof IText
             );
 
           if (currentRect && currentText) {
@@ -1413,10 +1439,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const canvas = target.canvas;
     // Check if the target is a group or active selection
 
-    if (
-      target.type.toLowerCase() === 'group' ||
-      target.type.toLowerCase() === 'activeSelection'
-    ) {
+    if (target instanceof Group) {
       // If the target is a group or active selection, remove it from the canvas
 
       canvas?.remove(target);
@@ -1531,6 +1554,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           svgObject.set({
             left: canvas.width! / 2 - svgObject.width! / 2,
             top: canvas.height! / 2 - svgObject.height! / 2,
+            originX: 'left',
+            originY: 'top',
           });
 
           svgObject.set('id', objectId);
@@ -1538,7 +1563,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
           const text = new FabricText(this.tags()?.[tag] || '', {
             fontSize: 16,
-
+            originX: 'left',
+            originY: 'top',
             fill: [this.colors()?.black, this.colors()?.blue].includes(
               this.selectedColor
             )
@@ -1561,6 +1587,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
           const group = new Group([svgObject, text], {
             ...this.groupConfig,
+            originX: 'left',
+            originY: 'top',
           });
 
           group.setControlsVisibility(this.hideControls);
@@ -1613,6 +1641,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             id: objectId,
             fontSize: 16,
             textAlign: 'center',
+            originX: 'left',
+            originY: 'top',
             fill:
               tool === 'text-bg'
                 ? [this.colors()?.black, this.colors()?.blue].includes(
@@ -1657,6 +1687,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             svgObject.id = objectId;
             svgObject.set({
               selectable: false,
+              originX: 'left',
+              originY: 'top',
             });
 
             // Position the SVG at the center of the image
@@ -1669,6 +1701,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             const group = new Group([svgObject, text], {
               ...this.groupConfig,
+              originX: 'left',
+              originY: 'top',
             });
 
             group.setControlsVisibility(this.hideControls);
@@ -1710,6 +1744,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
               this.deleteGroup([svgObject, text]);
               const group = new Group([svgObject, text], {
                 ...this.groupConfig,
+                originX: 'left',
+                originY: 'top',
               });
               group.setControlsVisibility(this.hideControls);
 
@@ -1751,6 +1787,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         // Set group configuration and lock scaling flip for certain types
         svgObject.set({
           ...this.groupConfig,
+          originX: 'left',
+          originY: 'top',
           lockScalingFlip: type === 'draw-5' ? true : false,
         });
         svgObject.id = objectId;
