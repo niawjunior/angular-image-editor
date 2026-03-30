@@ -1,6 +1,6 @@
 :host {
   font-family: "Noto Sans Thai", sans-serif !important;
-  touch-action: none;
+  touch-action: manipulation;
 }
 
 .canvas-container {
@@ -71,7 +71,7 @@
   align-items: center;
   box-sizing: border-box;
 
-  touch-action: none;
+  touch-action: manipulation;
 
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -90,7 +90,7 @@
   align-items: center;
   box-sizing: border-box;
 
-  touch-action: none;
+  touch-action: manipulation;
 
   -webkit-user-select: none;
   -khtml-user-select: none;

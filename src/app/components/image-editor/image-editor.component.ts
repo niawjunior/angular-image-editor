@@ -736,70 +736,68 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       canvas.discardActiveObject();
     });
 
-    // Native Pointer Events for touch gesture handling (pinch-to-zoom and pan)
+    // Native touch gesture handling (pinch-to-zoom and pan) — replaces HammerJS
     const canvasEl = canvas.getSelectionElement();
-    const activePointers = new Map<number, PointerEvent>();
     let lastPinchDistance = 0;
     let lastPanX = 0;
     let lastPanY = 0;
+    let isPinching = false;
 
-    canvasEl.addEventListener('pointerdown', (e: PointerEvent) => {
-      activePointers.set(e.pointerId, e);
-      if (activePointers.size === 1) {
-        lastPanX = e.clientX;
-        lastPanY = e.clientY;
-      }
-      if (activePointers.size === 2) {
-        e.preventDefault();
-        const pointers = Array.from(activePointers.values());
+    canvasEl.addEventListener('touchstart', (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        isPinching = true;
+        const [t0, t1] = [e.touches[0], e.touches[1]];
         lastPinchDistance = Math.hypot(
-          pointers[0].clientX - pointers[1].clientX,
-          pointers[0].clientY - pointers[1].clientY
+          t0.clientX - t1.clientX,
+          t0.clientY - t1.clientY
         );
-      }
-    });
-
-    canvasEl.addEventListener('pointermove', (e: PointerEvent) => {
-      if (!activePointers.has(e.pointerId)) return;
-      activePointers.set(e.pointerId, e);
-
-      if (activePointers.size === 2) {
-        // Pinch gesture — prevent browser zoom
         e.preventDefault();
-        const pointers = Array.from(activePointers.values());
+      } else if (e.touches.length === 1) {
+        lastPanX = e.touches[0].clientX;
+        lastPanY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+
+    canvasEl.addEventListener('touchmove', (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        // Pinch gesture
+        isPinching = true;
+        e.preventDefault();
+        const [t0, t1] = [e.touches[0], e.touches[1]];
         const currentDistance = Math.hypot(
-          pointers[0].clientX - pointers[1].clientX,
-          pointers[0].clientY - pointers[1].clientY
+          t0.clientX - t1.clientX,
+          t0.clientY - t1.clientY
         );
         if (lastPinchDistance > 0) {
           const scale = currentDistance / lastPinchDistance;
-          const centerX = (pointers[0].clientX + pointers[1].clientX) / 2;
-          const centerY = (pointers[0].clientY + pointers[1].clientY) / 2;
+          const centerX = (t0.clientX + t1.clientX) / 2;
+          const centerY = (t0.clientY + t1.clientY) / 2;
           this.zoomCanvas(canvas, scale, { x: centerX, y: centerY });
         }
         lastPinchDistance = currentDistance;
-      } else if (activePointers.size === 1 && canvas.getZoom() > 1) {
-        // Pan gesture — only when zoomed in
+      } else if (e.touches.length === 1 && !isPinching) {
+        // Pan gesture
         e.preventDefault();
-        const deltaX = e.clientX - lastPanX;
-        const deltaY = e.clientY - lastPanY;
+        const deltaX = e.touches[0].clientX - lastPanX;
+        const deltaY = e.touches[0].clientY - lastPanY;
         this.panCanvas(canvas, { x: deltaX, y: deltaY });
-        lastPanX = e.clientX;
-        lastPanY = e.clientY;
+        lastPanX = e.touches[0].clientX;
+        lastPanY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+
+    canvasEl.addEventListener('touchend', (e: TouchEvent) => {
+      if (e.touches.length < 2) {
+        lastPinchDistance = 0;
+      }
+      if (e.touches.length === 0) {
+        isPinching = false;
+      }
+      if (e.touches.length === 1) {
+        lastPanX = e.touches[0].clientX;
+        lastPanY = e.touches[0].clientY;
       }
     });
-
-    const pointerEnd = (e: PointerEvent) => {
-      activePointers.delete(e.pointerId);
-      lastPinchDistance = 0;
-      if (activePointers.size === 1) {
-        const remaining = Array.from(activePointers.values())[0];
-        lastPanX = remaining.clientX;
-        lastPanY = remaining.clientY;
-      }
-    };
-    canvasEl.addEventListener('pointerup', pointerEnd);
-    canvasEl.addEventListener('pointercancel', pointerEnd);
 
     canvas.renderAll();
     this.canvasFabric = canvas;
