@@ -737,10 +737,11 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Native touch gesture handling (pinch-to-zoom and pan) — replaces HammerJS
+    // Uses cumulative deltas from gesture start, matching HammerJS pan behavior
     const canvasEl = canvas.getSelectionElement();
     let lastPinchDistance = 0;
-    let lastPanX = 0;
-    let lastPanY = 0;
+    let panStartX = 0;
+    let panStartY = 0;
     let isPinching = false;
 
     canvasEl.addEventListener('touchstart', (e: TouchEvent) => {
@@ -753,8 +754,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         );
         e.preventDefault();
       } else if (e.touches.length === 1) {
-        lastPanX = e.touches[0].clientX;
-        lastPanY = e.touches[0].clientY;
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
       }
     }, { passive: false });
 
@@ -776,13 +777,11 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         lastPinchDistance = currentDistance;
       } else if (e.touches.length === 1 && !isPinching) {
-        // Pan gesture
+        // Pan gesture — cumulative delta from start (same as HammerJS deltaX/deltaY)
         e.preventDefault();
-        const deltaX = e.touches[0].clientX - lastPanX;
-        const deltaY = e.touches[0].clientY - lastPanY;
+        const deltaX = e.touches[0].clientX - panStartX;
+        const deltaY = e.touches[0].clientY - panStartY;
         this.panCanvas(canvas, { x: deltaX, y: deltaY });
-        lastPanX = e.touches[0].clientX;
-        lastPanY = e.touches[0].clientY;
       }
     }, { passive: false });
 
@@ -794,8 +793,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         isPinching = false;
       }
       if (e.touches.length === 1) {
-        lastPanX = e.touches[0].clientX;
-        lastPanY = e.touches[0].clientY;
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
       }
     });
 
