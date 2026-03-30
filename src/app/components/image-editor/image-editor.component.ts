@@ -561,7 +561,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const canvas: Canvas = new Canvas(fabricCanvas, {
       width: this.imageSize.width,
       height: this.imageSize.height,
-      allowTouchScrolling: true,
+      allowTouchScrolling: false,
       selection: false,
       containerClass: 'custom-container',
       enableRetinaScaling: false,
@@ -750,6 +750,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         lastPanY = e.clientY;
       }
       if (activePointers.size === 2) {
+        e.preventDefault();
         const pointers = Array.from(activePointers.values());
         lastPinchDistance = Math.hypot(
           pointers[0].clientX - pointers[1].clientX,
@@ -763,7 +764,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       activePointers.set(e.pointerId, e);
 
       if (activePointers.size === 2) {
-        // Pinch gesture
+        // Pinch gesture — prevent browser zoom
+        e.preventDefault();
         const pointers = Array.from(activePointers.values());
         const currentDistance = Math.hypot(
           pointers[0].clientX - pointers[1].clientX,
@@ -776,8 +778,9 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           this.zoomCanvas(canvas, scale, { x: centerX, y: centerY });
         }
         lastPinchDistance = currentDistance;
-      } else if (activePointers.size === 1) {
-        // Pan gesture
+      } else if (activePointers.size === 1 && canvas.getZoom() > 1) {
+        // Pan gesture — only when zoomed in
+        e.preventDefault();
         const deltaX = e.clientX - lastPanX;
         const deltaY = e.clientY - lastPanY;
         this.panCanvas(canvas, { x: deltaX, y: deltaY });
