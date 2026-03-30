@@ -1044,11 +1044,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.currentCanvasViewport = vpt;
 
-    // Use the adjusted delta point
-    canvas.zoomToPoint(deltaPoint, canvas.getZoom());
-
     // Render the canvas
-    canvas.renderAll();
     canvas.requestRenderAll();
   }
 
@@ -1094,7 +1090,6 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resetZoom();
     }
     // Render the canvas
-    canvas.renderAll();
     canvas.requestRenderAll();
   }
 
